@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Work Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .editorial-shadow {
+    box-shadow: 0 12px 40px rgba(57, 56, 47, 0.06);
+  }
+
+  .glass-nav {
+    background: rgba(255, 251, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    user-select: none;
+  }
+
+  .material-symbols-outlined.filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Scroll-triggered fade-in */
+  .fade-in-section {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger children when the parent becomes visible */
+  .fade-in-section.stagger > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .fade-in-section.stagger.is-visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0ms; }
+  .fade-in-section.stagger.is-visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 100ms; }
+  .fade-in-section.stagger.is-visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 200ms; }
+  .fade-in-section.stagger.is-visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 300ms; }
+  .fade-in-section.stagger.is-visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 400ms; }
+  .fade-in-section.stagger.is-visible > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 500ms; }
+}

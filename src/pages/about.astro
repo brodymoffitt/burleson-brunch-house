@@ -1,0 +1,139 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const ABOUT_IMG   = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsOP5BoPbPkfUvYwC_JjfXGutlJDXj3e6YtP_c1-jNrNH9PZhIYLGwjJc-obrZdiaqeGSBnWWvJXA6iEtR3bLENCvrhXaO-VSYsI0KmxEr6bMuk8cUY6Y-lEXdbkaIqHv5nO3-jG0o1PlatwViWlIbG1OoBK08Qv8_aerKoG5CTg95wiUiX52tnVHb2ARKw15H9q4FWetFQCyqAKt7Cr0HN6IzsYG_ftNM8sr7mSyEPW7kJ9xOrlKy84UoHm9anatv46NjD_Z5VGY';
+const HERO_IMG    = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAo_pCYAkdthxXK5U3Qwc2Amd6KdIGAimgdcvSEmkjWYm_tOgZBdDoMV0rG-PVOcoGMHm1UjIm97-F_f5dP-aNbfxOShMgIRcX9bYLwbMYflMAtD6QAQdeyCC7le_dLPddN9A6sXzi0q2LzChc2EROSWJP0CzcU2f45VI3At6UKVX2o4iqVpEFIyT145aMr8ET_MYZzMqOAE1wst2Sm2KT1ShfTjsJSb2Ok6Pf8Q86CSfr5eCcTU70uaexkqkx506kW0CAvJUkn2FQ';
+
+const values = [
+  {
+    icon: 'favorite',
+    title: 'Made with Love',
+    body: 'Everything gets made by hand every morning. No shortcuts, no mixes from a bag. Just real food cooked the right way.',
+  },
+  {
+    icon: 'eco',
+    title: 'Locally Sourced',
+    body: 'We work with Texas farmers to keep our ingredients fresh. Eggs, produce, meat. A lot of it comes from pretty close to home.',
+  },
+  {
+    icon: 'groups',
+    title: 'Community First',
+    body: 'Burleson is home to us. We show up for local events, support the schools, and love seeing familiar faces at the table.',
+  },
+];
+---
+
+<Layout
+  title="About Us — Burleson Brunch House"
+  description="Learn the story behind Burleson Brunch House — a family-owned brunch restaurant in Burleson, TX, rooted in community, fresh ingredients, and a whole lot of heart."
+>
+
+  <!-- ═══════════════════════════════════════
+       ABOUT HERO
+  ═══════════════════════════════════════ -->
+  <header class="relative h-72 md:h-96 flex items-end overflow-hidden" style="padding-top: 80px;">
+    <div class="absolute inset-0 z-0">
+      <img
+        class="w-full h-full object-cover object-center"
+        src={ABOUT_IMG}
+        alt="Inside Burleson Brunch House — warm wooden tables, sage walls, and morning sunlight"
+        fetchpriority="high"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+    </div>
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 pb-10 md:pb-14">
+      <p class="font-label uppercase tracking-[0.2em] text-sm text-white/70 mb-2">Our Story</p>
+      <h1 class="font-headline text-5xl md:text-7xl italic text-white drop-shadow-lg">About Us</h1>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════
+       STORY
+  ═══════════════════════════════════════ -->
+  <section class="py-14 md:py-24 bg-surface-container overflow-hidden fade-in-section">
+    <div class="max-w-7xl mx-auto px-6 md:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+
+        <!-- Text -->
+        <div>
+          <h2 class="font-headline text-4xl md:text-6xl italic text-primary leading-tight mb-8">
+            From Our Family<br />to Yours
+          </h2>
+          <div class="space-y-5 text-on-surface-variant leading-relaxed text-lg">
+            <p>
+              This place grew out of years of cooking at home on Sunday mornings. The same recipes our family had been making forever. At some point people started asking if we'd ever open a restaurant, so we did, right here in Burleson.
+            </p>
+            <p>
+              Breakfast and lunch are the meals that set the tone for your day. We think they deserve more than something quick and forgettable. Every plate that comes out of our kitchen gets made properly, no cutting corners.
+            </p>
+            <p>
+              We buy from Texas farms as much as we can. The eggs, the bacon, the produce in season. Fresh ingredients make a real difference. Burleson has been good to us and we try to give that back every day we're open.
+            </p>
+          </div>
+          <div class="mt-10 font-script text-4xl text-tertiary">
+            The Burleson Brunch House Family
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="relative">
+          <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary-container rounded-full opacity-20 blur-3xl pointer-events-none"></div>
+          <div class="relative z-10 rounded-xl overflow-hidden editorial-shadow transform rotate-1">
+            <img
+              class="w-full h-[480px] object-cover"
+              src={HERO_IMG}
+              alt="Burleson Brunch House — a warm morning spread, made with love"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       VALUES
+  ═══════════════════════════════════════ -->
+  <section class="py-14 md:py-24 bg-surface fade-in-section" aria-label="Our values">
+    <div class="max-w-7xl mx-auto px-6 md:px-8">
+      <div class="text-center mb-16">
+        <h2 class="font-headline text-3xl md:text-5xl italic text-primary">What We Stand For</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in-section stagger">
+        {values.map((v) => (
+          <div class="bg-surface-container-low rounded-xl p-10 editorial-shadow border border-primary/10 text-center">
+            <div class="w-14 h-14 rounded-xl bg-primary-container mx-auto flex items-center justify-center mb-6">
+              <span class="material-symbols-outlined text-primary text-2xl">{v.icon}</span>
+            </div>
+            <h3 class="font-headline text-2xl italic text-on-surface mb-3">{v.title}</h3>
+            <p class="text-on-surface-variant leading-relaxed text-sm">{v.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       CTA
+  ═══════════════════════════════════════ -->
+  <section class="py-12 md:py-20 bg-surface-container-highest text-center fade-in-section">
+    <div class="max-w-xl mx-auto px-6 md:px-8">
+      <div class="font-script text-5xl text-primary mb-4">Pull up a chair.</div>
+      <p class="text-on-surface-variant mb-8 leading-relaxed">
+        Come in and sit down whenever you're ready. Walk-ins are always welcome.
+      </p>
+      <a
+        href="/contact"
+        class="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-xl font-medium editorial-shadow hover:opacity-85 transition-opacity duration-300"
+      >
+        <span class="material-symbols-outlined text-base">event_available</span>
+        Reserve a Table
+      </a>
+    </div>
+  </section>
+
+</Layout>

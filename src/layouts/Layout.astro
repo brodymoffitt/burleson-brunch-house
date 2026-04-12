@@ -1,0 +1,230 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'Family-owned brunch restaurant in Burleson, Texas. Open daily 7am–3pm. Fresh, homemade food made with love. A taste of home in every bite.',
+  ogImage = '/og.jpg',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const currentPath = Astro.url.pathname;
+
+function isActive(path: string) {
+  if (path === '/') return currentPath === '/';
+  return currentPath.startsWith(path);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Restaurant",
+        "name": "Burleson Brunch House",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "2650 SW Wilshire Blvd",
+          "addressLocality": "Burleson",
+          "addressRegion": "TX",
+          "postalCode": "76028"
+        },
+        "telephone": "(682) 730-1391",
+        "openingHours": "Mo-Su 07:00-15:00",
+        "servesCuisine": "American, Brunch",
+        "priceRange": "$$"
+      }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Work+Sans:wght@300;400;500;600;700&family=Great+Vibes&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+
+  <body class="bg-surface font-body text-on-surface">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-nav editorial-shadow">
+      <div class="max-w-7xl mx-auto px-6 md:px-8">
+        <div class="flex justify-between items-center py-4">
+          <!-- Brand -->
+          <a href="/" class="font-script text-2xl md:text-3xl text-primary leading-none py-1 hover:opacity-80 transition-opacity duration-300">
+            Burleson Brunch House
+          </a>
+
+          <!-- Desktop links -->
+          <div class="hidden md:flex items-center gap-8">
+            <a
+              href="/"
+              class={`font-headline italic text-lg transition-colors duration-300 ${isActive('/') ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface/70 hover:text-primary'}`}
+            >Home</a>
+            <a
+              href="/menu"
+              class={`font-headline italic text-lg transition-colors duration-300 ${isActive('/menu') ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface/70 hover:text-primary'}`}
+            >Menu</a>
+            <a
+              href="/about"
+              class={`font-headline italic text-lg transition-colors duration-300 ${isActive('/about') ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface/70 hover:text-primary'}`}
+            >About</a>
+            <a
+              href="/contact"
+              class={`font-headline italic text-lg transition-colors duration-300 ${isActive('/contact') ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface/70 hover:text-primary'}`}
+            >Contact</a>
+          </div>
+
+          <!-- CTA + mobile toggle -->
+          <div class="flex items-center gap-4">
+            <a
+              href="/contact"
+              class="hidden md:inline-block bg-primary text-on-primary px-6 py-2 rounded-xl font-medium text-sm hover:opacity-85 transition-opacity duration-300 editorial-shadow"
+            >
+              Reserve a Table
+            </a>
+            <button
+              id="nav-toggle"
+              class="md:hidden text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors duration-300"
+              aria-label="Open navigation menu"
+              aria-expanded="false"
+            >
+              <span class="material-symbols-outlined text-2xl">menu</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div
+          id="mobile-menu"
+          class="md:hidden hidden pb-6 pt-2 border-t border-outline-variant/20 space-y-1"
+        >
+          <a href="/" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">Home</a>
+          <a href="/menu" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">Menu</a>
+          <a href="/about" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">About</a>
+          <a href="/contact" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">Contact</a>
+          <div class="pt-3">
+            <a href="/contact" class="block w-full bg-primary text-on-primary px-6 py-3 rounded-xl font-medium text-center hover:opacity-85 transition-opacity duration-300">
+              Reserve a Table
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page content -->
+    <slot />
+
+    <!-- Footer -->
+    <footer class="bg-surface-container border-t border-outline-variant/15">
+      <div class="max-w-7xl mx-auto px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div>
+            <div class="font-script text-4xl text-primary mb-4">Burleson Brunch House</div>
+            <p class="text-on-surface-variant text-sm leading-relaxed max-w-xs">
+              Family-owned and right here in Burleson, Texas. Breakfast and lunch every day of the week.
+            </p>
+          </div>
+          <div>
+            <h4 class="font-headline italic text-primary text-xl mb-5">Quick Links</h4>
+            <ul class="space-y-3 text-on-surface-variant text-sm">
+              <li><a href="/" class="hover:text-primary transition-colors duration-300">Home</a></li>
+              <li><a href="/menu" class="hover:text-primary transition-colors duration-300">Full Menu</a></li>
+              <li><a href="/about" class="hover:text-primary transition-colors duration-300">About Us</a></li>
+              <li><a href="/contact" class="hover:text-primary transition-colors duration-300">Contact & Reservations</a></li>
+              <li><a href="/privacy" class="hover:text-primary transition-colors duration-300">Privacy Policy</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-headline italic text-primary text-xl mb-5">Find Us</h4>
+            <div class="space-y-3 text-on-surface-variant text-sm">
+              <div class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-tertiary text-base mt-0.5">location_on</span>
+                <p>2650 SW Wilshire Blvd<br />Burleson, TX 76028</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary text-base">schedule</span>
+                <p>Daily: 7:00 am – 3:00 pm</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary text-base">call</span>
+                <a href="tel:6827301391" class="hover:text-primary transition-colors duration-300">(682) 730-1391</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 pt-6 border-t border-outline-variant/15 flex flex-col md:flex-row justify-between items-center gap-4 text-on-surface-variant text-xs">
+          <p>© {new Date().getFullYear()} Burleson Brunch House. All rights reserved.</p>
+          <a href="/privacy" class="hover:text-primary transition-colors duration-300">Privacy Policy</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll-triggered fade-in via Intersection Observer -->
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      document.querySelectorAll('.fade-in-section').forEach((el) => observer.observe(el));
+    </script>
+
+    <!-- Mobile nav toggle -->
+    <script>
+      const toggle = document.getElementById('nav-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      toggle?.addEventListener('click', () => {
+        const isOpen = !mobileMenu?.classList.contains('hidden');
+        mobileMenu?.classList.toggle('hidden');
+        toggle.setAttribute('aria-expanded', String(!isOpen));
+        const icon = toggle.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = isOpen ? 'menu' : 'close';
+      });
+    </script>
+  </body>
+</html>
