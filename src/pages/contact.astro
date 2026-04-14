@@ -1,11 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
 ---
 
 <Layout
-  title="Contact & Reservations — Burleson Brunch House"
-  description="Contact Burleson Brunch House in Burleson, TX. Reserve a table, ask a question, or just say hello. We're open daily 7am–3pm at 2650 SW Wilshire Blvd."
+  title="Contact & Hours — Burleson Brunch House"
+  description="Find Burleson Brunch House in Burleson, TX. Open daily 7am–3pm at 2650 SW Wilshire Blvd. Call us at (682) 730-1391."
 >
 
   <!-- ═══════════════════════════════════════
@@ -13,154 +12,85 @@ import Layout from '../layouts/Layout.astro';
   ═══════════════════════════════════════ -->
   <div class="pt-28 pb-14 bg-surface-container-low">
     <div class="max-w-7xl mx-auto px-6 md:px-8 text-center">
-      <p class="font-label uppercase tracking-[0.2em] text-sm text-tertiary mb-3">Reach Out</p>
-      <h1 class="font-headline text-5xl md:text-6xl italic text-primary">Contact Us</h1>
+      <p class="font-label uppercase tracking-[0.2em] text-sm text-tertiary mb-3">We'd Love to See You</p>
+      <h1 class="font-headline text-5xl md:text-6xl italic text-primary">Come Find Us</h1>
     </div>
   </div>
 
 
   <!-- ═══════════════════════════════════════
-       CONTACT GRID
+       MAIN CONTENT
   ═══════════════════════════════════════ -->
   <section class="py-12 md:py-20 bg-surface fade-in-section">
     <div class="max-w-7xl mx-auto px-6 md:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
-        <!-- Contact form -->
-        <div class="bg-surface-container-low rounded-2xl p-8 md:p-12 editorial-shadow border border-primary/10">
-          <h2 class="font-headline text-3xl italic text-primary mb-2">Send Us a Message</h2>
-          <p class="text-on-surface-variant text-sm mb-8 leading-relaxed">
-            Booking a table, planning something special, or just have a question? Send us a note and we'll get back to you.
-          </p>
+        <!-- Info panel -->
+        <div class="space-y-6">
 
-          <!-- Honeypot-protected form -->
-          <!-- Connect to a form handler (Formspree, Netlify Forms, etc.) before going live -->
-          <form
-            name="contact"
-            method="POST"
-            action="/thank-you"
-            class="space-y-6"
-          >
-            <!-- Honeypot field — hidden from real users, bots will fill it -->
-            <div class="absolute opacity-0 pointer-events-none h-0 overflow-hidden" aria-hidden="true">
-              <label for="website-field">
-                Leave this field empty:
-                <input
-                  type="text"
-                  id="website-field"
-                  name="website"
-                  tabindex="-1"
-                  autocomplete="off"
-                />
-              </label>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label for="first-name" class="block text-sm font-medium text-on-surface mb-2">First Name *</label>
-                <input
-                  type="text"
-                  id="first-name"
-                  name="first-name"
-                  required
-                  autocomplete="given-name"
-                  class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-primary-container/30 transition-all duration-300 border-0"
-                  placeholder="Jane"
-                />
+          <!-- Phone -->
+          <div class="bg-surface-container-low rounded-2xl p-8 editorial-shadow border border-primary/10">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary">call</span>
               </div>
               <div>
-                <label for="last-name" class="block text-sm font-medium text-on-surface mb-2">Last Name *</label>
-                <input
-                  type="text"
-                  id="last-name"
-                  name="last-name"
-                  required
-                  autocomplete="family-name"
-                  class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-primary-container/30 transition-all duration-300 border-0"
-                  placeholder="Smith"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label for="email" class="block text-sm font-medium text-on-surface mb-2">Email Address *</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                autocomplete="email"
-                class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-primary-container/30 transition-all duration-300 border-0"
-                placeholder="jane@example.com"
-              />
-            </div>
-
-            <div>
-              <label for="phone" class="block text-sm font-medium text-on-surface mb-2">Phone Number</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                autocomplete="tel"
-                class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-primary-container/30 transition-all duration-300 border-0"
-                placeholder="(555) 000-0000"
-              />
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label for="party-size" class="block text-sm font-medium text-on-surface mb-2">Party Size</label>
-                <select
-                  id="party-size"
-                  name="party-size"
-                  class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-primary-container/30 transition-all duration-300 border-0 appearance-none"
+                <h2 class="font-headline text-2xl italic text-primary mb-1">Give Us a Call</h2>
+                <p class="text-on-surface-variant text-sm mb-3">The fastest way to reach us. We're happy to answer questions or hold a table for large groups.</p>
+                <a
+                  href="tel:6827301391"
+                  class="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-medium editorial-shadow hover:opacity-85 transition-opacity duration-300 text-lg"
                 >
-                  <option value="">Select size</option>
-                  <option value="1-2">1 – 2 guests</option>
-                  <option value="3-4">3 – 4 guests</option>
-                  <option value="5-6">5 – 6 guests</option>
-                  <option value="7+">7+ guests</option>
-                </select>
+                  (682) 730-1391
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hours -->
+          <div class="bg-surface-container-low rounded-2xl p-8 editorial-shadow border border-primary/10">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary">schedule</span>
               </div>
               <div>
-                <label for="preferred-date" class="block text-sm font-medium text-on-surface mb-2">Preferred Date</label>
-                <input
-                  type="date"
-                  id="preferred-date"
-                  name="preferred-date"
-                  class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-primary-container/30 transition-all duration-300 border-0"
-                />
+                <h2 class="font-headline text-2xl italic text-primary mb-1">Hours</h2>
+                <p class="text-on-surface text-lg font-medium">Monday – Sunday</p>
+                <p class="text-on-surface-variant">7:00 am – 3:00 pm</p>
+                <p class="text-xs text-on-surface-variant/70 mt-2">Kitchen closes at 2:30 pm. Walk-ins always welcome.</p>
               </div>
             </div>
+          </div>
 
-            <div>
-              <label for="message" class="block text-sm font-medium text-on-surface mb-2">Message</label>
-              <textarea
-                id="message"
-                name="message"
-                rows="4"
-                class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-primary-container/30 transition-all duration-300 border-0 resize-none"
-                placeholder="Special occasion? Dietary restrictions? Just want to say hi? We'd love to hear from you."
-              ></textarea>
+          <!-- Address -->
+          <div class="bg-surface-container-low rounded-2xl p-8 editorial-shadow border border-primary/10">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary">location_on</span>
+              </div>
+              <div>
+                <h2 class="font-headline text-2xl italic text-primary mb-1">Address</h2>
+                <p class="text-on-surface-variant leading-relaxed mb-3">
+                  2650 SW Wilshire Blvd<br />Burleson, TX 76028
+                </p>
+                <a
+                  href="https://maps.google.com/?q=2650+SW+Wilshire+Blvd+Burleson+TX+76028"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                >
+                  <span class="material-symbols-outlined text-sm">open_in_new</span>
+                  Open in Google Maps
+                </a>
+              </div>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              class="w-full bg-primary text-on-primary py-4 rounded-xl font-medium text-base editorial-shadow hover:opacity-85 hover:scale-[1.01] transition-all duration-300"
-            >
-              Send Message
-            </button>
-
-            <p class="text-center text-xs text-on-surface-variant">
-              We usually get back to you within a few hours on business days.
-            </p>
-          </form>
         </div>
 
-        <!-- Info panel -->
-        <div class="space-y-8">
-          <!-- Google Maps embed -->
-          <div class="rounded-2xl overflow-hidden editorial-shadow h-64">
+        <!-- Map -->
+        <div class="space-y-6">
+          <div class="rounded-2xl overflow-hidden editorial-shadow h-80 md:h-[480px]">
             <iframe
               src="https://maps.google.com/maps?q=2650+SW+Wilshire+Blvd+Burleson+TX+76028&output=embed"
               width="100%"
@@ -172,52 +102,9 @@ import Layout from '../layouts/Layout.astro';
               title="Burleson Brunch House location on Google Maps"
             ></iframe>
           </div>
-
-          <!-- Contact details -->
-          <div class="bg-surface-container-highest rounded-2xl p-8 editorial-shadow border border-outline-variant/15">
-            <h2 class="font-headline text-3xl italic text-primary mb-8">Find Us</h2>
-            <div class="space-y-6">
-              <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-tertiary mt-0.5">location_on</span>
-                <div>
-                  <h3 class="font-semibold text-on-surface mb-1">Address</h3>
-                  <p class="text-on-surface-variant leading-relaxed">
-                    2650 SW Wilshire Blvd<br />Burleson, TX 76028
-                  </p>
-                  <a
-                    href="https://maps.google.com/?q=2650+SW+Wilshire+Blvd+Burleson+TX+76028"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-sm text-primary hover:underline mt-1.5 inline-block"
-                  >
-                    Open in Google Maps →
-                  </a>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-tertiary mt-0.5">schedule</span>
-                <div>
-                  <h3 class="font-semibold text-on-surface mb-1">Hours</h3>
-                  <p class="text-on-surface-variant">Monday – Sunday<br />7:00 am – 3:00 pm</p>
-                  <p class="text-xs text-on-surface-variant/70 mt-1">Kitchen closes at 2:30 pm</p>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-tertiary mt-0.5">call</span>
-                <div>
-                  <h3 class="font-semibold text-on-surface mb-1">Phone</h3>
-                  <a
-                    href="tel:6827301391"
-                    class="text-on-surface-variant hover:text-primary transition-colors duration-300"
-                  >
-                    (682) 730-1391
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          <p class="text-center text-on-surface-variant text-sm">
+            Plenty of parking right out front. Come hungry.
+          </p>
         </div>
 
       </div>
