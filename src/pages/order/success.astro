@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Order Confirmed — Burleson Brunch House"
+  description="Your pickup order at Burleson Brunch House has been placed and paid. We'll have it ready for you!"
+>
+
+  <div class="min-h-screen flex items-center justify-center px-6 py-24 bg-surface" style="padding-top: 120px;">
+    <div class="max-w-md w-full text-center">
+
+      <!-- Check icon -->
+      <div class="w-20 h-20 rounded-full bg-primary flex items-center justify-center mx-auto mb-8 editorial-shadow">
+        <span
+          class="material-symbols-outlined text-on-primary text-4xl"
+          style="font-variation-settings: 'FILL' 1;"
+        >check_circle</span>
+      </div>
+
+      <!-- Script accent -->
+      <div class="font-script text-5xl text-primary mb-3">Order Confirmed!</div>
+
+      <!-- Headline filled in by JS -->
+      <h1 class="font-headline text-2xl italic text-on-surface mb-2" id="confirm-heading">
+        Your order is paid and confirmed.
+      </h1>
+      <p class="text-on-surface-variant leading-relaxed mb-8" id="confirm-body">
+        We'll have everything ready for your pickup time. See you soon!
+      </p>
+
+      <!-- Info card -->
+      <div class="bg-surface-container-highest rounded-2xl p-6 editorial-shadow mb-8 text-left space-y-4">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-tertiary text-lg mt-0.5">location_on</span>
+          <div>
+            <p class="font-semibold text-on-surface text-sm">Pick up at</p>
+            <p class="text-on-surface-variant text-sm">2650 SW Wilshire Blvd, Burleson, TX</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-tertiary text-lg mt-0.5">schedule</span>
+          <div>
+            <p class="font-semibold text-on-surface text-sm">Your pickup time</p>
+            <p class="text-on-surface-variant text-sm" id="confirm-time">—</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-tertiary text-lg mt-0.5">call</span>
+          <div>
+            <p class="font-semibold text-on-surface text-sm">Need to make a change?</p>
+            <a href="tel:6827301391" class="text-primary text-sm hover:underline">(682) 730-1391</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-xl font-medium text-sm editorial-shadow hover:opacity-85 transition-opacity duration-300"
+        >
+          <span class="material-symbols-outlined text-base">home</span>
+          Back to Home
+        </a>
+        <a
+          href="/menu"
+          class="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-8 py-3 rounded-xl font-medium text-sm hover:bg-primary hover:text-on-primary transition-all duration-300"
+        >
+          View Menu
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</Layout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const name   = params.get('name');
+  const pickup = params.get('pickup');
+
+  if (name) {
+    const heading = document.getElementById('confirm-heading');
+    if (heading) heading.textContent = `Thank you, ${name}! Your order is confirmed.`;
+  }
+
+  if (pickup) {
+    const timeEl = document.getElementById('confirm-time');
+    const bodyEl = document.getElementById('confirm-body');
+    if (timeEl) timeEl.textContent = pickup;
+    if (bodyEl) bodyEl.textContent = `We'll have everything ready at ${pickup}. See you soon!`;
+  }
+</script>

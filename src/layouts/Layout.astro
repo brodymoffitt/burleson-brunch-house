@@ -101,6 +101,10 @@ function isActive(path: string) {
               class={`font-headline italic text-lg transition-colors duration-300 ${isActive('/menu') ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface/70 hover:text-primary'}`}
             >Menu</a>
             <a
+              href="/order"
+              class={`font-headline italic text-lg transition-colors duration-300 ${isActive('/order') ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface/70 hover:text-primary'}`}
+            >Order Online</a>
+            <a
               href="/about"
               class={`font-headline italic text-lg transition-colors duration-300 ${isActive('/about') ? 'text-primary border-b-2 border-primary pb-1 font-semibold' : 'text-on-surface/70 hover:text-primary'}`}
             >About</a>
@@ -136,6 +140,7 @@ function isActive(path: string) {
         >
           <a href="/" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">Home</a>
           <a href="/menu" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">Menu</a>
+          <a href="/order" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">Order Online</a>
           <a href="/about" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">About</a>
           <a href="/contact" class="block px-3 py-2 rounded-lg font-headline italic text-lg text-on-surface hover:text-primary hover:bg-surface-container transition-all duration-300">Contact</a>
           <div class="pt-3">
@@ -165,6 +170,7 @@ function isActive(path: string) {
             <ul class="space-y-3 text-on-surface-variant text-sm">
               <li><a href="/" class="hover:text-primary transition-colors duration-300">Home</a></li>
               <li><a href="/menu" class="hover:text-primary transition-colors duration-300">Full Menu</a></li>
+              <li><a href="/order" class="hover:text-primary transition-colors duration-300">Order Online</a></li>
               <li><a href="/about" class="hover:text-primary transition-colors duration-300">About Us</a></li>
               <li><a href="/contact" class="hover:text-primary transition-colors duration-300">Contact & Reservations</a></li>
               <li><a href="/privacy" class="hover:text-primary transition-colors duration-300">Privacy Policy</a></li>

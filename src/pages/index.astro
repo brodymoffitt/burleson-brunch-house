@@ -258,12 +258,19 @@ const ABOUT_IMG   = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsOP5Bo
         </div>
       </div>
 
-      <div class="mt-14 text-center">
+      <div class="mt-14 flex flex-col sm:flex-row gap-4 justify-center">
         <a
           href="/menu"
-          class="inline-block bg-primary text-on-primary px-10 py-4 rounded-xl text-lg font-medium editorial-shadow hover:scale-105 hover:opacity-90 transition-all duration-300"
+          class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-10 py-4 rounded-xl text-lg font-medium editorial-shadow hover:scale-105 hover:opacity-90 transition-all duration-300"
         >
           View Full Menu
+        </a>
+        <a
+          href="/order"
+          class="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-10 py-4 rounded-xl text-lg font-medium hover:bg-primary hover:text-on-primary transition-all duration-300"
+        >
+          <span class="material-symbols-outlined text-base">shopping_bag</span>
+          Order Online
         </a>
       </div>
 

@@ -1,0 +1,828 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const HERO_IMG =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAo_pCYAkdthxXK5U3Qwc2Amd6KdIGAimgdcvSEmkjWYm_tOgZBdDoMV0rG-PVOcoGMHm1UjIm97-F_f5dP-aNbfxOShMgIRcX9bYLwbMYflMAtD6QAQdeyCC7le_dLPddN9A6sXzi0q2LzChc2EROSWJP0CzcU2f45VI3At6UKVX2o4iqVpEFIyT145aMr8ET_MYZzMqOAE1wst2Sm2KT1ShfTjsJSb2Ok6Pf8Q86CSfr5eCcsTU70uaexkqkx506kW0CAvJUkn2FQ';
+
+// ─────────────────────────────────────────
+//  MENU DATA
+// ─────────────────────────────────────────
+type MenuItem    = { name: string; price: string };
+type MenuSection = { id: string; category: string; icon: string; items: MenuItem[] };
+
+const bbhFavorites: MenuSection = {
+  id: 'bbh-fav',
+  category: 'Burleson Brunch House Favorites',
+  icon: 'restaurant',
+  items: [
+    { name: 'Brunch House Combo',       price: '$7.50' },
+    { name: 'Migas',                    price: '$7.99' },
+    { name: 'Breakfast Burrito',        price: '$8.75' },
+    { name: 'Biscuits and Gravy',       price: '$6.99' },
+    { name: 'Texas Biscuits and Gravy', price: '$7.99' },
+  ],
+};
+
+const breakfast: MenuSection[] = [
+  {
+    id: 'eggcelent',
+    category: 'Eggcelent',
+    icon: 'egg_alt',
+    items: [
+      { name: 'All American',                   price: '$8.99'  },
+      { name: 'Corned Beef Hash',               price: '$9.25'  },
+      { name: 'Chicken Fried Steak or Chicken', price: '$9.99'  },
+      { name: 'Steak and Eggs',                 price: '$12.99' },
+      { name: 'Chicken Apple Sausage',          price: '$9.59'  },
+      { name: 'Two Eggs Any Style',             price: '$6.59'  },
+    ],
+  },
+  {
+    id: 'omelettes',
+    category: 'Traditional French Rolled Omelettes',
+    icon: 'dining',
+    items: [
+      { name: 'The Floridian',     price: '$12.99' },
+      { name: 'Garden Lovers',     price: '$8.99'  },
+      { name: 'Popeye',            price: '$8.59'  },
+      { name: 'Bacado',            price: '$9.59'  },
+      { name: 'The Colorado',      price: '$8.99'  },
+      { name: 'Little Pig',        price: '$8.99'  },
+      { name: 'Three Little Pigs', price: '$9.99'  },
+      { name: 'Athenian',          price: '$8.99'  },
+      { name: 'The Texan',         price: '$8.99'  },
+      { name: 'The New Yorker',    price: '$8.99'  },
+      { name: 'Chuck Wagon',       price: '$8.99'  },
+    ],
+  },
+  {
+    id: 'skillets',
+    category: 'Skillets',
+    icon: 'local_fire_department',
+    items: [
+      { name: 'Steak Skillet',    price: '$12.99' },
+      { name: 'The Irish Man',    price: '$9.25'  },
+      { name: 'Meat Lovers',      price: '$9.99'  },
+      { name: 'Big Apple',        price: '$8.99'  },
+      { name: 'Burleson Skillet', price: '$8.99'  },
+      { name: 'Summer Skillet',   price: '$8.99'  },
+      { name: 'Gyro Skillet',     price: '$8.99'  },
+      { name: 'Country Skillet',  price: '$8.50'  },
+    ],
+  },
+  {
+    id: 'pancakes',
+    category: 'Pancakes',
+    icon: 'brunch_dining',
+    items: [
+      { name: 'Oreo Cakes',              price: '$8.59' },
+      { name: 'Chocolate Chip Cakes',    price: '$8.59' },
+      { name: 'Banana Nutella Pancakes', price: '$8.99' },
+      { name: 'Fresh Fruit Pancake',     price: '$7.99' },
+      { name: 'Buttermilk Pancakes',     price: '$6.59' },
+    ],
+  },
+  {
+    id: 'french-toast',
+    category: 'French Toast',
+    icon: 'bakery_dining',
+    items: [
+      { name: 'Original French Toast',       price: '$6.59' },
+      { name: 'Strawberry French Toast',     price: '$7.99' },
+      { name: 'Banana Nutella French Toast', price: '$8.99' },
+      { name: 'Stuffed French Toast',        price: '$8.99' },
+      { name: 'Banana Foster French Toast',  price: '$9.50' },
+      { name: 'Triple Berry French Toast',   price: '$9.99' },
+    ],
+  },
+  {
+    id: 'waffles',
+    category: 'Belgian Waffles',
+    icon: 'breakfast_dining',
+    items: [
+      { name: 'Belgian Waffle',      price: '$6.25' },
+      { name: 'Chicken and Waffle',  price: '$9.99' },
+      { name: 'Triple Berry Waffle', price: '$9.99' },
+    ],
+  },
+  {
+    id: 'crepes',
+    category: 'Homemade French Crepes',
+    icon: 'blur_circular',
+    items: [
+      { name: 'Original Crepes',       price: '$6.59' },
+      { name: 'Banana Nutella Crepes', price: '$7.50' },
+      { name: 'Triple Berry Crepes',   price: '$9.99' },
+    ],
+  },
+  { ...bbhFavorites, id: 'bbh-fav-b' },
+];
+
+const lunch: MenuSection[] = [
+  {
+    id: 'benedicts',
+    category: 'Benedicts',
+    icon: 'egg_alt',
+    items: [
+      { name: 'Crab Benedict',            price: '$18.99' },
+      { name: 'Salmon and Crab Benedict', price: '$18.99' },
+      { name: 'Steak House Benedict',     price: '$18.99' },
+      { name: 'Croque Madam Benedict',    price: '$15.49' },
+      { name: 'Eggs Florentine',          price: '$14.49' },
+      { name: 'Texas Benedict',           price: '$14.49' },
+      { name: 'Eggs Benedict',            price: '$13.49' },
+    ],
+  },
+  {
+    id: 'healthy',
+    category: 'Healthy Choices',
+    icon: 'eco',
+    items: [
+      { name: 'Hercules Breakfast',    price: '$11.49' },
+      { name: 'Skinny Migas',          price: '$10.49' },
+      { name: 'Skinny Florentine',     price: '$11.00' },
+      { name: 'Old Fashioned Oatmeal', price: '$6.60'  },
+      { name: 'California Toast',      price: '$10.25' },
+    ],
+  },
+  {
+    id: 'sandwiches',
+    category: 'Sandwiches',
+    icon: 'lunch_dining',
+    items: [
+      { name: 'Tuna Melt',                     price: '$10.95' },
+      { name: 'West Coast',                    price: '$11.25' },
+      { name: 'Grilled Portabella',            price: '$10.95' },
+      { name: 'The Popeye',                    price: '$11.25' },
+      { name: 'Crispy Fried Chicken Sandwich', price: '$11.50' },
+      { name: 'Buffalo Crispy Chicken',        price: '$12.05' },
+      { name: 'Grilled Chicken Sandwich',      price: '$11.50' },
+      { name: 'Reuben Sandwich',               price: '$12.05' },
+      { name: 'Gyro Sandwich',                 price: '$12.05' },
+      { name: 'French Dip',                    price: '$12.60' },
+      { name: 'BLT',                           price: '$10.95' },
+      { name: 'Grilled Ham and Cheese',        price: '$10.40' },
+      { name: 'Turkey Club Sandwich',          price: '$11.50' },
+      { name: 'Italian Beef Sandwich',         price: '$12.60' },
+    ],
+  },
+  {
+    id: 'wraps',
+    category: 'Wraps',
+    icon: 'lunch_dining',
+    items: [
+      { name: 'Smoked Salmon',    price: '$12.49' },
+      { name: 'Chicken Avocado',  price: '$11.50' },
+      { name: 'Buffalo Chicken',  price: '$11.50' },
+      { name: 'The Beef Eater',   price: '$12.05' },
+      { name: 'The Turkey Lurkey',price: '$12.05' },
+      { name: 'Gyro Wrap',        price: '$11.49' },
+      { name: 'West Coast Wrap',  price: '$11.49' },
+    ],
+  },
+  {
+    id: 'burgers',
+    category: 'Burgers',
+    icon: 'restaurant',
+    items: [
+      { name: 'Burleson Brunch Burger', price: '$12.99' },
+      { name: 'Black & Blue',           price: '$12.50' },
+      { name: 'Buffalo Burger',         price: '$12.50' },
+      { name: 'All American',           price: '$11.99' },
+      { name: 'Mushroom & Swiss',       price: '$12.99' },
+      { name: 'Patty Melt',             price: '$11.99' },
+      { name: 'Bacon Cheese Burger',    price: '$12.75' },
+    ],
+  },
+  {
+    id: 'salads',
+    category: 'Salads',
+    icon: 'spa',
+    items: [
+      { name: 'Julienne Salad',        price: '$12.99' },
+      { name: 'Cobb Salad',            price: '$12.99' },
+      { name: 'Greek Salad',           price: '$12.55' },
+      { name: 'Southwest Salad',       price: '$12.55' },
+      { name: 'Steak Salad',           price: '$18.49' },
+      { name: 'Salmon Salad',          price: '$13.99' },
+      { name: 'Buffalo Chicken Salad', price: '$12.99' },
+      { name: 'Stuffed Avocado',       price: '$12.99' },
+    ],
+  },
+  {
+    id: 'kids',
+    category: "Kid's Menu",
+    icon: 'child_care',
+    items: [
+      { name: 'Mickey Mouse Pancake',  price: '$7.25' },
+      { name: "Kid's French Toast",    price: '$7.25' },
+      { name: "Kid's Breakfast",       price: '$7.25' },
+      { name: "Kid's Grilled Cheese",  price: '$7.25' },
+      { name: "Kid's Chicken Tenders", price: '$7.25' },
+      { name: "Kid's Mac N Cheese",    price: '$7.25' },
+    ],
+  },
+  { ...bbhFavorites, id: 'bbh-fav-l' },
+];
+
+const drinksAndSides: MenuSection[] = [
+  {
+    id: 'beverages',
+    category: 'Beverages',
+    icon: 'local_cafe',
+    items: [
+      { name: 'Segafredo Coffee',            price: '$3.89' },
+      { name: 'Hot Tea',                     price: '$3.15' },
+      { name: 'Soft Drinks',                 price: '$3.50' },
+      { name: 'Iced Tea',                    price: '$3.20' },
+      { name: 'Fresh Squeezed Orange Juice', price: '$4.15' },
+      { name: 'Apple Juice',                 price: '$3.60' },
+      { name: 'Milk',                        price: '$2.75' },
+      { name: 'Chocolate Milk',              price: '$3.15' },
+    ],
+  },
+  {
+    id: 'sides',
+    category: 'Sides',
+    icon: 'add_circle',
+    items: [
+      { name: 'Bacon, Ham, Sausage',   price: '$4.70' },
+      { name: 'Corned Beef Hash',      price: '$4.70' },
+      { name: 'Chicken Apple Sausage', price: '$4.70' },
+      { name: 'Biscuits',              price: '$3.05' },
+      { name: 'Toast',                 price: '$3.05' },
+      { name: 'Hash Browns',           price: '$3.05' },
+      { name: 'Brunch Potatoes',       price: '$3.05' },
+      { name: 'Grits',                 price: '$3.05' },
+      { name: 'One Egg',               price: '$2.05' },
+      { name: 'Avocado',               price: '$2.50' },
+      { name: 'One Pancake',           price: '$3.85' },
+      { name: 'Sliced Tomato',         price: '$2.75' },
+      { name: 'One Slice French Toast',price: '$4.40' },
+      { name: 'Soup Bowl',             price: '$5.25' },
+      { name: 'Soup Cup',              price: '$3.05' },
+      { name: 'French Fries',          price: '$3.05' },
+      { name: 'Fresh Fruit Bowl',      price: '$5.25' },
+      { name: 'Fresh Fruit Cup',       price: '$4.15' },
+      { name: 'Side Salad',            price: '$4.15' },
+    ],
+  },
+];
+
+const tabs = [
+  { id: 'breakfast',  label: 'Breakfast',      sections: breakfast      },
+  { id: 'lunch',      label: 'Lunch',           sections: lunch          },
+  { id: 'drinks',     label: 'Drinks & Sides',  sections: drinksAndSides },
+];
+
+// Pickup time slots: 7:00 AM – 2:30 PM, every 30 min
+const timeSlots: string[] = [];
+for (let h = 7; h <= 14; h++) {
+  for (const m of [0, 30]) {
+    const hour12 = h > 12 ? h - 12 : h;
+    const ampm   = h >= 12 ? 'PM' : 'AM';
+    const minStr = m === 0 ? '00' : '30';
+    timeSlots.push(`${hour12}:${minStr} ${ampm}`);
+  }
+}
+---
+
+<Layout
+  title="Order Online — Burleson Brunch House"
+  description="Order pickup from Burleson Brunch House in Burleson, TX. Browse our full breakfast and lunch menu and place your order online. Ready in about 20 minutes."
+>
+
+  <!-- ═══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════ -->
+  <header class="relative h-56 md:h-72 flex items-end overflow-hidden" style="padding-top: 80px;">
+    <div class="absolute inset-0 z-0">
+      <img
+        class="w-full h-full object-cover object-center"
+        src={HERO_IMG}
+        alt="Top-down view of a brunch spread at Burleson Brunch House"
+        fetchpriority="high"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/40 to-black/20"></div>
+    </div>
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 pb-10 md:pb-12">
+      <p class="font-label uppercase tracking-[0.2em] text-sm text-white/70 mb-2">Burleson Brunch House</p>
+      <h1 class="font-headline text-5xl md:text-7xl italic text-white drop-shadow-lg">Order for Pickup</h1>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════
+       INFO STRIP
+  ═══════════════════════════════════════ -->
+  <div class="bg-primary">
+    <div class="max-w-7xl mx-auto px-6 md:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <p class="text-on-primary/90 text-sm">
+        Select your items below · Payment due at pickup · Ready in ~20 min
+      </p>
+      <div class="flex items-center gap-2 text-on-primary font-medium text-sm whitespace-nowrap">
+        <span class="material-symbols-outlined text-sm">schedule</span>
+        Open Daily · 7:00 am – 3:00 pm
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════ -->
+  <div class="max-w-7xl mx-auto px-6 md:px-8 py-10 md:py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+
+
+      <!-- ─── LEFT: MENU ─────────────────────────────── -->
+      <div class="lg:col-span-7">
+
+        <!-- Tab bar -->
+        <div class="sticky top-[72px] z-30 bg-surface/95 backdrop-blur-md -mx-6 md:-mx-8 px-6 md:px-8 border-b border-outline-variant/20 shadow-[0_2px_12px_rgba(57,56,47,0.05)] mb-2">
+          <div class="flex gap-1 py-3 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Menu categories">
+            {tabs.map((tab, i) => (
+              <button
+                id={`otab-btn-${tab.id}`}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls={`otab-panel-${tab.id}`}
+                data-tab={tab.id}
+                class={`otab-btn flex-shrink-0 px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 whitespace-nowrap ${
+                  i === 0
+                    ? 'bg-primary text-on-primary editorial-shadow'
+                    : 'text-on-surface-variant hover:text-primary hover:bg-surface-container'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Tab panels -->
+        {tabs.map((tab, tIdx) => (
+          <div
+            id={`otab-panel-${tab.id}`}
+            role="tabpanel"
+            aria-labelledby={`otab-btn-${tab.id}`}
+            class={`otab-panel ${tIdx !== 0 ? 'hidden' : ''}`}
+          >
+            {tab.sections.map((section, sIdx) => (
+              <div
+                class={`py-10 px-4 md:px-6 rounded-2xl mb-3 ${sIdx % 2 === 0 ? 'bg-surface-container-low' : 'bg-surface'}`}
+              >
+                <!-- Section header -->
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-primary text-lg">{section.icon}</span>
+                  </div>
+                  <h2 class="font-headline text-2xl md:text-3xl italic text-primary">{section.category}</h2>
+                </div>
+
+                <!-- Items -->
+                <div class="space-y-0">
+                  {section.items.map((item, iIdx) => (
+                    <div
+                      data-row={`${section.id}-${iIdx}`}
+                      class="item-row flex items-center justify-between gap-4 py-3.5 border-b border-outline-variant/20 last:border-0 rounded-xl transition-all duration-300 -mx-2 px-2"
+                    >
+                      <div class="flex items-baseline gap-3 min-w-0">
+                        <span class="font-body text-on-surface text-sm leading-snug">{item.name}</span>
+                        <span class="text-tertiary font-semibold text-sm whitespace-nowrap tabular-nums flex-shrink-0">{item.price}</span>
+                      </div>
+
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          data-action="decrease"
+                          data-item-id={`${section.id}-${iIdx}`}
+                          data-item-name={item.name}
+                          data-item-price={item.price.slice(1)}
+                          data-item-section={section.category}
+                          disabled
+                          aria-label={`Remove ${item.name}`}
+                          class="w-8 h-8 rounded-lg flex items-center justify-center text-xl font-light text-on-surface bg-surface-container-high hover:bg-primary hover:text-on-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-200 leading-none"
+                        >−</button>
+
+                        <span
+                          data-qty={`${section.id}-${iIdx}`}
+                          class="w-6 text-center font-semibold text-on-surface tabular-nums text-sm select-none"
+                        >0</span>
+
+                        <button
+                          data-action="increase"
+                          data-item-id={`${section.id}-${iIdx}`}
+                          data-item-name={item.name}
+                          data-item-price={item.price.slice(1)}
+                          data-item-section={section.category}
+                          aria-label={`Add ${item.name}`}
+                          class="w-8 h-8 rounded-xl flex items-center justify-center text-xl font-light bg-primary text-on-primary hover:opacity-85 transition-all duration-200 leading-none"
+                        >+</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+
+      </div><!-- end left col -->
+
+
+      <!-- ─── RIGHT: ORDER SUMMARY + FORM ──────────────── -->
+      <aside class="lg:col-span-5" id="order-form-mobile" aria-label="Your order">
+        <div class="lg:sticky lg:top-[88px]">
+
+          <!-- Form panel -->
+          <div id="form-panel" class="bg-surface-container-highest rounded-2xl editorial-shadow overflow-hidden">
+
+            <!-- Summary header -->
+            <div class="px-6 pt-6 pb-4 border-b border-outline-variant/20">
+              <div class="flex items-center justify-between">
+                <h2 class="font-headline text-2xl italic text-primary">Your Order</h2>
+                <span class="text-xs font-medium text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">
+                  Pickup Only
+                </span>
+              </div>
+              <p class="text-on-surface-variant text-xs mt-1">2650 SW Wilshire Blvd · Burleson, TX</p>
+            </div>
+
+            <!-- Summary list -->
+            <div class="px-6 py-5 min-h-[100px]">
+              <div id="summary-empty" class="flex flex-col items-center py-6 text-center">
+                <span class="material-symbols-outlined text-outline-variant text-4xl mb-3">shopping_bag</span>
+                <p class="text-on-surface-variant text-sm italic">Your order is empty.</p>
+                <p class="text-on-surface-variant/60 text-xs mt-1">Add items from the menu on the left.</p>
+              </div>
+
+              <div id="summary-list" class="hidden"></div>
+
+              <div id="summary-total-row" class="hidden border-t border-outline-variant/25 pt-4 mt-4 flex justify-between items-baseline">
+                <span class="font-semibold text-on-surface text-sm">Subtotal</span>
+                <span class="font-bold text-tertiary text-lg tabular-nums" data-cart-total>$0.00</span>
+              </div>
+
+              <p class="text-xs text-on-surface-variant/50 mt-3 leading-relaxed" id="payment-note" style="display:none;">
+                Pay securely by card, Apple Pay, or Google Pay · Pickup confirmed after payment
+              </p>
+            </div>
+
+            <!-- Form -->
+            <form
+              id="order-form"
+              action="#"
+              class="px-6 pb-6 space-y-4 border-t border-outline-variant/20 pt-5"
+            >
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
+                <div>
+                  <label for="customer-name" class="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-1.5">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    id="customer-name"
+                    name="name"
+                    required
+                    placeholder="Full name"
+                    class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:bg-primary-container/20 transition-all duration-300"
+                  />
+                </div>
+                <div>
+                  <label for="customer-phone" class="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-1.5">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    id="customer-phone"
+                    name="phone"
+                    required
+                    placeholder="(xxx) xxx-xxxx"
+                    class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:bg-primary-container/20 transition-all duration-300"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="pickup-time" class="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-1.5">
+                  Pickup Time
+                </label>
+                <div class="relative">
+                  <select
+                    id="pickup-time"
+                    name="pickup_time"
+                    required
+                    class="w-full appearance-none bg-surface-variant rounded-xl px-4 py-3 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all duration-300 pr-10"
+                  >
+                    <option value="" disabled selected>Select a time…</option>
+                    {timeSlots.map(slot => (
+                      <option value={slot}>{slot}</option>
+                    ))}
+                  </select>
+                  <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg pointer-events-none">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label for="order-notes" class="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-1.5">
+                  Special Requests <span class="font-normal normal-case tracking-normal">(optional)</span>
+                </label>
+                <textarea
+                  id="order-notes"
+                  name="notes"
+                  rows={2}
+                  placeholder="Allergies, substitutions, extra sauce…"
+                  class="w-full bg-surface-variant rounded-xl px-4 py-3 text-on-surface text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/25 resize-none transition-all duration-300"
+                ></textarea>
+              </div>
+
+              <!-- Empty cart warning -->
+              <p id="cart-error" class="hidden text-error text-xs font-medium flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">warning</span>
+                Please add at least one item before placing your order.
+              </p>
+
+              <button
+                id="submit-btn"
+                type="submit"
+                disabled
+                class="w-full bg-primary text-on-primary py-4 rounded-xl font-semibold text-sm editorial-shadow flex items-center justify-center gap-2 hover:opacity-85 disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-300"
+              >
+                <span class="material-symbols-outlined text-base">lock</span>
+                <span id="submit-btn-text">Pay & Place Order</span>
+              </button>
+
+              <div class="flex items-center justify-center gap-1.5 text-on-surface-variant/50">
+                <span class="material-symbols-outlined text-sm">verified_user</span>
+                <span class="text-xs">Secured by Stripe · Card, Apple Pay, Google Pay</span>
+              </div>
+
+            </form>
+          </div><!-- end form-panel -->
+
+        </div>
+      </aside><!-- end right col -->
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       MOBILE STICKY BOTTOM BAR
+       (slides up when items are added)
+  ═══════════════════════════════════════ -->
+  <div
+    id="mobile-bar"
+    class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-primary text-on-primary transition-transform duration-500 ease-in-out translate-y-full"
+    aria-live="polite"
+  >
+    <div class="max-w-xl mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="material-symbols-outlined text-on-primary/80 text-lg">shopping_bag</span>
+        <div class="text-sm min-w-0">
+          <span class="font-semibold" data-cart-count>0 items</span>
+          <span class="text-on-primary/70 mx-1.5">·</span>
+          <span class="tabular-nums font-bold" data-cart-total>$0.00</span>
+        </div>
+      </div>
+      <a
+        href="#order-form-mobile"
+        class="flex-shrink-0 bg-on-primary text-primary px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity duration-200 flex items-center gap-1"
+      >
+        Review
+        <span class="material-symbols-outlined text-sm">expand_more</span>
+      </a>
+    </div>
+  </div>
+
+</Layout>
+
+
+<style>
+  /* Tab panel entrance */
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+  .otab-panel:not(.hidden) {
+    animation: panelIn 0.28s ease-out;
+  }
+
+  /* Selected item row highlight */
+  .item-row.is-selected {
+    background-color: rgb(210 232 217 / 0.3);
+  }
+
+  /* Hide scrollbar on tab strip */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+
+<script>
+  // ─────────────────────────────────────────
+  //  TAB SWITCHING
+  // ─────────────────────────────────────────
+  const tabBtns   = document.querySelectorAll<HTMLButtonElement>('.otab-btn');
+  const tabPanels = document.querySelectorAll<HTMLElement>('.otab-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+
+      tabBtns.forEach(b => {
+        const active = b.dataset.tab === target;
+        b.setAttribute('aria-selected', String(active));
+        b.classList.toggle('bg-primary',           active);
+        b.classList.toggle('text-on-primary',      active);
+        b.classList.toggle('editorial-shadow',     active);
+        b.classList.toggle('text-on-surface-variant', !active);
+        b.classList.toggle('hover:text-primary',      !active);
+        b.classList.toggle('hover:bg-surface-container', !active);
+      });
+
+      tabPanels.forEach(panel => {
+        panel.classList.toggle('hidden', panel.id !== `otab-panel-${target}`);
+      });
+    });
+  });
+
+
+  // ─────────────────────────────────────────
+  //  CART STATE
+  // ─────────────────────────────────────────
+  interface CartEntry { name: string; price: number; qty: number; section: string; }
+  const cart = new Map<string, CartEntry>();
+
+
+  // ─────────────────────────────────────────
+  //  QTY BUTTON HANDLER
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-action]');
+    if (!btn?.dataset.action) return;
+
+    const { action, itemId, itemName, itemPrice, itemSection } = btn.dataset;
+    if (!itemId || (action !== 'increase' && action !== 'decrease')) return;
+
+    const price    = parseFloat(itemPrice ?? '0');
+    const existing = cart.get(itemId) ?? { name: itemName!, price, qty: 0, section: itemSection! };
+    const newQty   = Math.max(0, existing.qty + (action === 'increase' ? 1 : -1));
+
+    if (newQty === 0) {
+      cart.delete(itemId);
+    } else {
+      cart.set(itemId, { ...existing, qty: newQty });
+    }
+
+    // Update qty display
+    const qtyEl = document.querySelector<HTMLElement>(`[data-qty="${itemId}"]`);
+    if (qtyEl) qtyEl.textContent = String(newQty);
+
+    // Update row highlight
+    const row = document.querySelector(`[data-row="${itemId}"]`);
+    row?.classList.toggle('is-selected', newQty > 0);
+
+    // Enable / disable decrease button
+    const decBtn = document.querySelector<HTMLButtonElement>(`[data-action="decrease"][data-item-id="${itemId}"]`);
+    if (decBtn) decBtn.disabled = newQty === 0;
+
+    renderSummary();
+  });
+
+
+  // ─────────────────────────────────────────
+  //  RENDER SUMMARY SIDEBAR
+  // ─────────────────────────────────────────
+  function renderSummary() {
+    let total = 0;
+    let count = 0;
+    cart.forEach(item => { total += item.price * item.qty; count += item.qty; });
+
+    // Shared total / count elements (desktop sidebar + mobile bar both use data-cart-*)
+    document.querySelectorAll<HTMLElement>('[data-cart-total]').forEach(el => {
+      el.textContent = '$' + total.toFixed(2);
+    });
+    document.querySelectorAll<HTMLElement>('[data-cart-count]').forEach(el => {
+      el.textContent = count + (count === 1 ? ' item' : ' items');
+    });
+
+    const listEl   = document.getElementById('summary-list');
+    const emptyEl  = document.getElementById('summary-empty');
+    const totalRow = document.getElementById('summary-total-row');
+    const payNote  = document.getElementById('payment-note');
+
+    if (cart.size === 0) {
+      if (listEl)  { listEl.innerHTML = ''; listEl.classList.add('hidden'); }
+      emptyEl?.classList.remove('hidden');
+      totalRow?.classList.add('hidden');
+      if (payNote) payNote.style.display = 'none';
+    } else {
+      emptyEl?.classList.add('hidden');
+      totalRow?.classList.remove('hidden');
+      if (payNote) payNote.style.display = '';
+
+      // Group cart entries by section
+      const bySec = new Map<string, Array<CartEntry & { id: string }>>();
+      cart.forEach((item, id) => {
+        if (!bySec.has(item.section)) bySec.set(item.section, []);
+        bySec.get(item.section)!.push({ id, ...item });
+      });
+
+      let html = '';
+      bySec.forEach((items, sec) => {
+        html += `<p class="text-xs uppercase tracking-widest text-on-surface-variant/50 mt-4 mb-1 first:mt-0">${sec}</p>`;
+        items.forEach(item => {
+          html += `
+            <div class="flex justify-between items-baseline py-1 gap-3">
+              <span class="text-on-surface text-sm leading-snug">${item.qty}× ${item.name}</span>
+              <span class="text-tertiary font-semibold text-sm whitespace-nowrap tabular-nums flex-shrink-0">
+                $${(item.price * item.qty).toFixed(2)}
+              </span>
+            </div>`;
+        });
+      });
+
+      if (listEl) { listEl.innerHTML = html; listEl.classList.remove('hidden'); }
+    }
+
+    // Submit button state
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+    if (submitBtn) {
+      submitBtn.disabled = count === 0;
+      submitBtn.classList.toggle('opacity-35',        count === 0);
+      submitBtn.classList.toggle('cursor-not-allowed',count === 0);
+    }
+
+    // Mobile bottom bar
+    const bar = document.getElementById('mobile-bar');
+    if (bar) bar.style.transform = count > 0 ? 'translateY(0)' : 'translateY(100%)';
+  }
+
+
+  // ─────────────────────────────────────────
+  //  FORM SUBMISSION → STRIPE CHECKOUT
+  // ─────────────────────────────────────────
+  const form       = document.getElementById('order-form') as HTMLFormElement | null;
+  const submitBtn  = document.getElementById('submit-btn')  as HTMLButtonElement | null;
+  const submitText = document.getElementById('submit-btn-text');
+
+  form?.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const cartError = document.getElementById('cart-error');
+
+    if (cart.size === 0) {
+      cartError?.classList.remove('hidden');
+      return;
+    }
+    cartError?.classList.add('hidden');
+
+    // Collect form values
+    const name        = (document.getElementById('customer-name')  as HTMLInputElement)?.value.trim();
+    const phone       = (document.getElementById('customer-phone') as HTMLInputElement)?.value.trim();
+    const pickup_time = (document.getElementById('pickup-time')    as HTMLSelectElement)?.value;
+    const notes       = (document.getElementById('order-notes')    as HTMLTextAreaElement)?.value.trim();
+
+    // Build items array for Stripe line items
+    const items: Array<{ name: string; price: number; qty: number }> = [];
+    cart.forEach(item => items.push({ name: item.name, price: item.price, qty: item.qty }));
+
+    // Loading state
+    if (submitBtn)  submitBtn.disabled = true;
+    if (submitText) submitText.textContent = 'Redirecting to payment…';
+
+    try {
+      const res = await fetch('/api/create-checkout', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          items,
+          name,
+          phone,
+          pickup_time,
+          notes,
+          origin: window.location.origin,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error ?? 'No checkout URL returned');
+      }
+    } catch (err) {
+      if (submitText) submitText.textContent = 'Something went wrong — please call us';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.replace('bg-primary', 'bg-error');
+      }
+      console.error(err);
+    }
+  });
+</script>
