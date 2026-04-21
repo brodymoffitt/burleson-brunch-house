@@ -39,10 +39,10 @@ import Layout from '../../layouts/Layout.astro';
           </div>
         </div>
         <div class="flex items-start gap-3">
-          <span class="material-symbols-outlined text-tertiary text-lg mt-0.5">schedule</span>
+          <span class="material-symbols-outlined text-tertiary text-lg mt-0.5">timer</span>
           <div>
-            <p class="font-semibold text-on-surface text-sm">Your pickup time</p>
-            <p class="text-on-surface-variant text-sm" id="confirm-time">—</p>
+            <p class="font-semibold text-on-surface text-sm">Your order will be ready</p>
+            <p class="text-on-surface-variant text-sm" id="confirm-time">In about 30 minutes</p>
           </div>
         </div>
         <div class="flex items-start gap-3">
@@ -78,17 +78,17 @@ import Layout from '../../layouts/Layout.astro';
 <script>
   const params = new URLSearchParams(window.location.search);
   const name   = params.get('name');
-  const pickup = params.get('pickup');
 
   if (name) {
     const heading = document.getElementById('confirm-heading');
     if (heading) heading.textContent = `Thank you, ${name}! Your order is confirmed.`;
   }
 
-  if (pickup) {
-    const timeEl = document.getElementById('confirm-time');
-    const bodyEl = document.getElementById('confirm-body');
-    if (timeEl) timeEl.textContent = pickup;
-    if (bodyEl) bodyEl.textContent = `We'll have everything ready at ${pickup}. See you soon!`;
-  }
+  // Compute ready time = now + 30 min
+  const ready = new Date(Date.now() + 30 * 60 * 1000);
+  const readyStr = ready.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const timeEl = document.getElementById('confirm-time');
+  const bodyEl = document.getElementById('confirm-body');
+  if (timeEl) timeEl.textContent = `Around ${readyStr}`;
+  if (bodyEl) bodyEl.textContent = `We'll have everything hot and ready for you around ${readyStr}. See you soon!`;
 </script>

@@ -25,7 +25,6 @@ export const POST: APIRoute = async ({ request }) => {
     items: CartItem[];
     name: string;
     phone: string;
-    pickup_time: string;
     notes: string;
     origin: string;
   };
@@ -39,7 +38,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const { items, name, phone, pickup_time, notes, origin } = body;
+  const { items, name, phone, notes, origin } = body;
 
   if (!items?.length) {
     return new Response(JSON.stringify({ error: 'Cart is empty.' }), {
@@ -62,16 +61,15 @@ export const POST: APIRoute = async ({ request }) => {
     metadata: {
       customer_name: name,
       phone,
-      pickup_time,
+      ready_in: 'Ready in ~30 minutes',
       notes: notes ?? '',
     },
-    // Show order summary on Stripe's checkout page
     custom_text: {
       submit: {
-        message: `Pickup at Burleson Brunch House · ${pickup_time} · (682) 730-1391`,
+        message: `Pickup at Burleson Brunch House · Ready in ~30 min · (682) 730-1391`,
       },
     },
-    success_url: `${origin}/order/success?name=${encodeURIComponent(name)}&pickup=${encodeURIComponent(pickup_time)}`,
+    success_url: `${origin}/order/success?name=${encodeURIComponent(name)}`,
     cancel_url: `${origin}/order/cancel`,
   });
 

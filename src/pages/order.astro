@@ -7,19 +7,84 @@ const HERO_IMG =
 // ─────────────────────────────────────────
 //  MENU DATA
 // ─────────────────────────────────────────
-type MenuItem    = { name: string; price: string };
-type MenuSection = { id: string; category: string; icon: string; items: MenuItem[] };
+type SectionUpgrade = { name: string; price: number };
+type SideOption     = string | { name: string; upcharge: number };
+type MenuItem       = {
+  name: string; price: string;
+  sidesRequired?: number;
+  sidesPool?: SideOption[];    // item-level side options (overrides section.sidesPool)
+  upgrades?: SectionUpgrade[]; // item-level upgrades (overrides section.upgrades)
+  upgradeLabel?: string;
+  upgradeIcon?: string;
+};
+type MenuSection    = {
+  id: string; category: string; icon: string; items: MenuItem[];
+  sidesPool?: SideOption[];    // section-level side options (fallback to breakfastSides)
+  upgrades?: SectionUpgrade[];
+};
+
+const normalizeSide = (s: SideOption): { name: string; upcharge: number } =>
+  typeof s === 'string' ? { name: s, upcharge: 0 } : s;
+
+const breakfastSides: SideOption[] = [
+  'Hash Browns',
+  'Brunch Potatoes',
+  'Toast',
+  'Grits',
+  { name: 'Smoky Grits', upcharge: 1 },
+  'Fresh Fruit Cup',
+  'Biscuit',
+];
+
+const iceCreamUpgrades: SectionUpgrade[] = [
+  { name: 'Vanilla Ice Cream',              price: 2 },
+  { name: 'Vanilla Almond Lemon Ice Cream', price: 3 },
+];
+
+const potatoSides: SideOption[] = [
+  'Hash Browns',
+  'Brunch Potatoes',
+  'Grits',
+  { name: 'Smoky Grits', upcharge: 1 },
+];
+
+const benedictAndHealthySides: SideOption[] = [
+  'Hash Browns', 'Brunch Potatoes', 'Grits', 'Fresh Fruit Cup',
+];
+
+const lunchSides: SideOption[] = [
+  'French Fries', 'Soup', 'Salad', 'Fresh Fruit',
+];
 
 const bbhFavorites: MenuSection = {
   id: 'bbh-fav',
   category: 'Burleson Brunch House Favorites',
   icon: 'restaurant',
   items: [
-    { name: 'Brunch House Combo',       price: '$7.50' },
-    { name: 'Migas',                    price: '$7.99' },
-    { name: 'Breakfast Burrito',        price: '$8.75' },
-    { name: 'Biscuits and Gravy',       price: '$6.99' },
-    { name: 'Texas Biscuits and Gravy', price: '$7.99' },
+    {
+      name: 'Brunch House Combo', price: '$11.50', sidesRequired: 1,
+      upgrades: [
+        { name: 'French Toast', price: 2 },
+        { name: 'Crepes',       price: 2 },
+        { name: 'Waffle',       price: 2 },
+      ],
+      upgradeLabel: 'Add a sweet side?',
+      upgradeIcon:  'brunch_dining',
+    },
+    {
+      name: 'Migas', price: '$11.75', sidesRequired: 1,
+      upgrades: [
+        { name: 'Bacon',   price: 2 },
+        { name: 'Ham',     price: 2 },
+        { name: 'Sausage', price: 2 },
+        { name: 'Chorizo', price: 2 },
+      ],
+      upgradeLabel: 'Add meat?',
+      upgradeIcon:  'add_circle',
+    },
+    { name: 'Breakfast Burrito',        price: '$12.99', sidesRequired: 1, sidesPool: potatoSides },
+    { name: 'Biscuits and Gravy',       price: '$9.25',  sidesRequired: 1, sidesPool: potatoSides },
+    { name: 'Texas Biscuits and Gravy', price: '$9.99',  sidesRequired: 1, sidesPool: potatoSides },
   ],
 };
 
@@ -29,12 +94,12 @@ const breakfast: MenuSection[] = [
     category: 'Eggcelent',
     icon: 'egg_alt',
     items: [
-      { name: 'All American',                   price: '$8.99'  },
-      { name: 'Corned Beef Hash',               price: '$9.25'  },
-      { name: 'Chicken Fried Steak or Chicken', price: '$9.99'  },
-      { name: 'Steak and Eggs',                 price: '$12.99' },
-      { name: 'Chicken Apple Sausage',          price: '$9.59'  },
-      { name: 'Two Eggs Any Style',             price: '$6.59'  },
+      { name: 'All American',                   price: '$12.99', sidesRequired: 2 },
+      { name: 'Corned Beef Hash',               price: '$13.25', sidesRequired: 2 },
+      { name: 'Chicken Fried Steak or Chicken', price: '$13.99', sidesRequired: 2 },
+      { name: 'Steak and Eggs',                 price: '$16.99', sidesRequired: 2 },
+      { name: 'Chicken Apple Sausage',          price: '$13.59', sidesRequired: 2 },
+      { name: 'Two Eggs Any Style',             price: '$9.59',  sidesRequired: 2 },
     ],
   },
   {
@@ -42,67 +107,71 @@ const breakfast: MenuSection[] = [
     category: 'Traditional French Rolled Omelettes',
     icon: 'dining',
     items: [
-      { name: 'The Floridian',     price: '$12.99' },
-      { name: 'Garden Lovers',     price: '$8.99'  },
-      { name: 'Popeye',            price: '$8.59'  },
-      { name: 'Bacado',            price: '$9.59'  },
-      { name: 'The Colorado',      price: '$8.99'  },
-      { name: 'Little Pig',        price: '$8.99'  },
-      { name: 'Three Little Pigs', price: '$9.99'  },
-      { name: 'Athenian',          price: '$8.99'  },
-      { name: 'The Texan',         price: '$8.99'  },
-      { name: 'The New Yorker',    price: '$8.99'  },
-      { name: 'Chuck Wagon',       price: '$8.99'  },
+      { name: 'The Floridian',     price: '$15.99', sidesRequired: 2 },
+      { name: 'Garden Lovers',     price: '$12.99', sidesRequired: 2 },
+      { name: 'Popeye',            price: '$12.59', sidesRequired: 2 },
+      { name: 'Bacado',            price: '$13.59', sidesRequired: 2 },
+      { name: 'The Colorado',      price: '$12.99', sidesRequired: 2 },
+      { name: 'Little Pig',        price: '$12.99', sidesRequired: 2 },
+      { name: 'Three Little Pigs', price: '$13.99', sidesRequired: 2 },
+      { name: 'Athenian',          price: '$12.99', sidesRequired: 2 },
+      { name: 'The Texan',         price: '$12.99', sidesRequired: 2 },
+      { name: 'The New Yorker',    price: '$12.99', sidesRequired: 2 },
+      { name: 'Chuck Wagon',       price: '$12.99', sidesRequired: 2 },
     ],
   },
   {
     id: 'skillets',
     category: 'Skillets',
     icon: 'local_fire_department',
+    sidesPool: ['Toast', 'Biscuit', 'Pancakes'],
     items: [
-      { name: 'Steak Skillet',    price: '$12.99' },
-      { name: 'The Irish Man',    price: '$9.25'  },
-      { name: 'Meat Lovers',      price: '$9.99'  },
-      { name: 'Big Apple',        price: '$8.99'  },
-      { name: 'Burleson Skillet', price: '$8.99'  },
-      { name: 'Summer Skillet',   price: '$8.99'  },
-      { name: 'Gyro Skillet',     price: '$8.99'  },
-      { name: 'Country Skillet',  price: '$8.50'  },
+      { name: 'Steak Skillet',    price: '$15.99', sidesRequired: 1 },
+      { name: 'The Irish Man',    price: '$12.99', sidesRequired: 1 },
+      { name: 'Meat Lovers',      price: '$13.99', sidesRequired: 1 },
+      { name: 'Big Apple',        price: '$12.99', sidesRequired: 1 },
+      { name: 'Burleson Skillet', price: '$12.99', sidesRequired: 1 },
+      { name: 'Summer Skillet',   price: '$12.99', sidesRequired: 1 },
+      { name: 'Gyro Skillet',     price: '$12.99', sidesRequired: 1 },
+      { name: 'Country Skillet',  price: '$12.49', sidesRequired: 1 },
     ],
   },
   {
     id: 'pancakes',
     category: 'Pancakes',
     icon: 'brunch_dining',
+    upgrades: iceCreamUpgrades,
     items: [
-      { name: 'Oreo Cakes',              price: '$8.59' },
-      { name: 'Chocolate Chip Cakes',    price: '$8.59' },
-      { name: 'Banana Nutella Pancakes', price: '$8.99' },
-      { name: 'Fresh Fruit Pancake',     price: '$7.99' },
-      { name: 'Buttermilk Pancakes',     price: '$6.59' },
+      { name: 'Oreo Cakes',              price: '$13.75' },
+      { name: 'Chocolate Chip Cakes',    price: '$13.75' },
+      { name: 'Banana Nutella Pancakes', price: '$13.99' },
+      { name: 'Fresh Fruit Pancake',     price: '$13.49' },
+      { name: 'Buttermilk Pancakes',     price: '$11.49' },
     ],
   },
   {
     id: 'french-toast',
     category: 'French Toast',
     icon: 'bakery_dining',
+    upgrades: iceCreamUpgrades,
     items: [
-      { name: 'Original French Toast',       price: '$6.59' },
-      { name: 'Strawberry French Toast',     price: '$7.99' },
-      { name: 'Banana Nutella French Toast', price: '$8.99' },
-      { name: 'Stuffed French Toast',        price: '$8.99' },
-      { name: 'Banana Foster French Toast',  price: '$9.50' },
-      { name: 'Triple Berry French Toast',   price: '$9.99' },
+      { name: 'Original French Toast',       price: '$9.99'  },
+      { name: 'Strawberry French Toast',     price: '$10.99' },
+      { name: 'Banana Nutella French Toast', price: '$12.49' },
+      { name: 'Stuffed French Toast',        price: '$12.99' },
+      { name: 'Banana Foster French Toast',  price: '$13.49' },
+      { name: 'Triple Berry French Toast',   price: '$13.99' },
     ],
   },
   {
     id: 'waffles',
     category: 'Belgian Waffles',
     icon: 'breakfast_dining',
+    upgrades: iceCreamUpgrades,
     items: [
-      { name: 'Belgian Waffle',      price: '$6.25' },
-      { name: 'Chicken and Waffle',  price: '$9.99' },
-      { name: 'Triple Berry Waffle', price: '$9.99' },
+      { name: 'Belgian Waffle',      price: '$9.49'  },
+      { name: 'Chicken and Waffle',  price: '$14.00' },
+      { name: 'Triple Berry Waffle', price: '$12.49' },
     ],
   },
   {
@@ -110,9 +179,37 @@ const breakfast: MenuSection[] = [
     category: 'Homemade French Crepes',
     icon: 'blur_circular',
     items: [
-      { name: 'Original Crepes',       price: '$6.59' },
-      { name: 'Banana Nutella Crepes', price: '$7.50' },
-      { name: 'Triple Berry Crepes',   price: '$9.99' },
+      { name: 'Original Crepes',       price: '$9.99',  sidesRequired: 1 },
+      { name: 'Banana Nutella Crepes', price: '$9.99',  sidesRequired: 1 },
+      { name: 'Triple Berry Crepes',   price: '$12.99', sidesRequired: 1 },
+    ],
+  },
+  {
+    id: 'benedicts',
+    category: 'Benedicts',
+    icon: 'egg_alt',
+    sidesPool: benedictAndHealthySides,
+    items: [
+      { name: 'Crab Benedict',            price: '$21.99', sidesRequired: 1 },
+      { name: 'Salmon and Crab Benedict', price: '$21.99', sidesRequired: 1 },
+      { name: 'Steak House Benedict',     price: '$21.99', sidesRequired: 1 },
+      { name: 'Croque Madam Benedict',    price: '$18.49', sidesRequired: 1 },
+      { name: 'Eggs Florentine',          price: '$17.49', sidesRequired: 1 },
+      { name: 'Texas Benedict',           price: '$17.49', sidesRequired: 1 },
+      { name: 'Eggs Benedict',            price: '$16.49', sidesRequired: 1 },
+    ],
+  },
+  {
+    id: 'healthy',
+    category: 'Healthy Choices',
+    icon: 'eco',
+    sidesPool: benedictAndHealthySides,
+    items: [
+      { name: 'Hercules Breakfast',    price: '$14.49', sidesRequired: 1 },
+      { name: 'Skinny Migas',          price: '$13.49', sidesRequired: 1 },
+      { name: 'Skinny Florentine',     price: '$14.00', sidesRequired: 1 },
+      { name: 'Old Fashioned Oatmeal', price: '$9.60',  sidesRequired: 1 },
+      { name: 'California Toast',      price: '$13.25', sidesRequired: 1 },
     ],
   },
   { ...bbhFavorites, id: 'bbh-fav-b' },
@@ -120,78 +217,55 @@ const breakfast: MenuSection[] = [
 
 const lunch: MenuSection[] = [
   {
-    id: 'benedicts',
-    category: 'Benedicts',
-    icon: 'egg_alt',
-    items: [
-      { name: 'Crab Benedict',            price: '$18.99' },
-      { name: 'Salmon and Crab Benedict', price: '$18.99' },
-      { name: 'Steak House Benedict',     price: '$18.99' },
-      { name: 'Croque Madam Benedict',    price: '$15.49' },
-      { name: 'Eggs Florentine',          price: '$14.49' },
-      { name: 'Texas Benedict',           price: '$14.49' },
-      { name: 'Eggs Benedict',            price: '$13.49' },
-    ],
-  },
-  {
-    id: 'healthy',
-    category: 'Healthy Choices',
-    icon: 'eco',
-    items: [
-      { name: 'Hercules Breakfast',    price: '$11.49' },
-      { name: 'Skinny Migas',          price: '$10.49' },
-      { name: 'Skinny Florentine',     price: '$11.00' },
-      { name: 'Old Fashioned Oatmeal', price: '$6.60'  },
-      { name: 'California Toast',      price: '$10.25' },
-    ],
-  },
-  {
     id: 'sandwiches',
     category: 'Sandwiches',
     icon: 'lunch_dining',
+    sidesPool: lunchSides,
     items: [
-      { name: 'Tuna Melt',                     price: '$10.95' },
-      { name: 'West Coast',                    price: '$11.25' },
-      { name: 'Grilled Portabella',            price: '$10.95' },
-      { name: 'The Popeye',                    price: '$11.25' },
-      { name: 'Crispy Fried Chicken Sandwich', price: '$11.50' },
-      { name: 'Buffalo Crispy Chicken',        price: '$12.05' },
-      { name: 'Grilled Chicken Sandwich',      price: '$11.50' },
-      { name: 'Reuben Sandwich',               price: '$12.05' },
-      { name: 'Gyro Sandwich',                 price: '$12.05' },
-      { name: 'French Dip',                    price: '$12.60' },
-      { name: 'BLT',                           price: '$10.95' },
-      { name: 'Grilled Ham and Cheese',        price: '$10.40' },
-      { name: 'Turkey Club Sandwich',          price: '$11.50' },
-      { name: 'Italian Beef Sandwich',         price: '$12.60' },
+      { name: 'Tuna Melt',                     price: '$13.95', sidesRequired: 1 },
+      { name: 'West Coast',                    price: '$14.25', sidesRequired: 1 },
+      { name: 'Grilled Portabella',            price: '$13.95', sidesRequired: 1 },
+      { name: 'The Popeye',                    price: '$14.25', sidesRequired: 1 },
+      { name: 'Crispy Fried Chicken Sandwich', price: '$14.50', sidesRequired: 1 },
+      { name: 'Buffalo Crispy Chicken',        price: '$15.05', sidesRequired: 1 },
+      { name: 'Grilled Chicken Sandwich',      price: '$14.50', sidesRequired: 1 },
+      { name: 'Reuben Sandwich',               price: '$15.05', sidesRequired: 1 },
+      { name: 'Gyro Sandwich',                 price: '$15.05', sidesRequired: 1 },
+      { name: 'French Dip',                    price: '$15.60', sidesRequired: 1 },
+      { name: 'BLT',                           price: '$13.95', sidesRequired: 1 },
+      { name: 'Grilled Ham and Cheese',        price: '$13.40', sidesRequired: 1 },
+      { name: 'Turkey Club Sandwich',          price: '$14.50', sidesRequired: 1 },
+      { name: 'Italian Beef Sandwich',         price: '$15.60', sidesRequired: 1 },
     ],
   },
   {
     id: 'wraps',
     category: 'Wraps',
     icon: 'lunch_dining',
+    sidesPool: lunchSides,
     items: [
-      { name: 'Smoked Salmon',    price: '$12.49' },
-      { name: 'Chicken Avocado',  price: '$11.50' },
-      { name: 'Buffalo Chicken',  price: '$11.50' },
-      { name: 'The Beef Eater',   price: '$12.05' },
-      { name: 'The Turkey Lurkey',price: '$12.05' },
-      { name: 'Gyro Wrap',        price: '$11.49' },
-      { name: 'West Coast Wrap',  price: '$11.49' },
+      { name: 'Smoked Salmon',     price: '$15.49', sidesRequired: 1 },
+      { name: 'Chicken Avocado',   price: '$14.50', sidesRequired: 1 },
+      { name: 'Buffalo Chicken',   price: '$14.50', sidesRequired: 1 },
+      { name: 'The Beef Eater',    price: '$15.05', sidesRequired: 1 },
+      { name: 'The Turkey Lurkey', price: '$15.05', sidesRequired: 1 },
+      { name: 'Gyro Wrap',         price: '$14.49', sidesRequired: 1 },
+      { name: 'West Coast Wrap',   price: '$14.49', sidesRequired: 1 },
     ],
   },
   {
     id: 'burgers',
     category: 'Burgers',
     icon: 'restaurant',
+    sidesPool: lunchSides,
     items: [
-      { name: 'Burleson Brunch Burger', price: '$12.99' },
-      { name: 'Black & Blue',           price: '$12.50' },
-      { name: 'Buffalo Burger',         price: '$12.50' },
-      { name: 'All American',           price: '$11.99' },
-      { name: 'Mushroom & Swiss',       price: '$12.99' },
-      { name: 'Patty Melt',             price: '$11.99' },
-      { name: 'Bacon Cheese Burger',    price: '$12.75' },
+      { name: 'Burleson Brunch Burger', price: '$16.99', sidesRequired: 1 },
+      { name: 'Black & Blue',           price: '$16.49', sidesRequired: 1 },
+      { name: 'Buffalo Burger',         price: '$16.49', sidesRequired: 1 },
+      { name: 'All American',           price: '$15.99', sidesRequired: 1 },
+      { name: 'Mushroom & Swiss',       price: '$16.99', sidesRequired: 1 },
+      { name: 'Patty Melt',             price: '$15.99', sidesRequired: 1 },
+      { name: 'Bacon Cheese Burger',    price: '$16.75', sidesRequired: 1 },
     ],
   },
   {
@@ -199,14 +273,14 @@ const lunch: MenuSection[] = [
     category: 'Salads',
     icon: 'spa',
     items: [
-      { name: 'Julienne Salad',        price: '$12.99' },
-      { name: 'Cobb Salad',            price: '$12.99' },
-      { name: 'Greek Salad',           price: '$12.55' },
-      { name: 'Southwest Salad',       price: '$12.55' },
-      { name: 'Steak Salad',           price: '$18.49' },
-      { name: 'Salmon Salad',          price: '$13.99' },
-      { name: 'Buffalo Chicken Salad', price: '$12.99' },
-      { name: 'Stuffed Avocado',       price: '$12.99' },
+      { name: 'Julienne Salad',        price: '$16.99' },
+      { name: 'Cobb Salad',            price: '$16.99' },
+      { name: 'Greek Salad',           price: '$16.55' },
+      { name: 'Southwest Salad',       price: '$16.55' },
+      { name: 'Steak Salad',           price: '$22.49' },
+      { name: 'Salmon Salad',          price: '$17.99' },
+      { name: 'Buffalo Chicken Salad', price: '$16.99' },
+      { name: 'Stuffed Avocado',       price: '$16.99' },
     ],
   },
   {
@@ -214,12 +288,12 @@ const lunch: MenuSection[] = [
     category: "Kid's Menu",
     icon: 'child_care',
     items: [
-      { name: 'Mickey Mouse Pancake',  price: '$7.25' },
-      { name: "Kid's French Toast",    price: '$7.25' },
-      { name: "Kid's Breakfast",       price: '$7.25' },
-      { name: "Kid's Grilled Cheese",  price: '$7.25' },
-      { name: "Kid's Chicken Tenders", price: '$7.25' },
-      { name: "Kid's Mac N Cheese",    price: '$7.25' },
+      { name: 'Mickey Mouse Pancake',  price: '$9.25' },
+      { name: "Kid's French Toast",    price: '$9.25' },
+      { name: "Kid's Breakfast",       price: '$9.25' },
+      { name: "Kid's Grilled Cheese",  price: '$9.25' },
+      { name: "Kid's Chicken Tenders", price: '$9.25' },
+      { name: "Kid's Mac N Cheese",    price: '$9.25' },
     ],
   },
   { ...bbhFavorites, id: 'bbh-fav-l' },
@@ -231,14 +305,14 @@ const drinksAndSides: MenuSection[] = [
     category: 'Beverages',
     icon: 'local_cafe',
     items: [
-      { name: 'Segafredo Coffee',            price: '$3.89' },
-      { name: 'Hot Tea',                     price: '$3.15' },
-      { name: 'Soft Drinks',                 price: '$3.50' },
-      { name: 'Iced Tea',                    price: '$3.20' },
-      { name: 'Fresh Squeezed Orange Juice', price: '$4.15' },
-      { name: 'Apple Juice',                 price: '$3.60' },
-      { name: 'Milk',                        price: '$2.75' },
-      { name: 'Chocolate Milk',              price: '$3.15' },
+      { name: 'Segafredo Coffee',            price: '$4.89' },
+      { name: 'Hot Tea',                     price: '$4.15' },
+      { name: 'Soft Drinks',                 price: '$4.50' },
+      { name: 'Iced Tea',                    price: '$4.20' },
+      { name: 'Fresh Squeezed Orange Juice', price: '$5.15' },
+      { name: 'Apple Juice',                 price: '$4.60' },
+      { name: 'Milk',                        price: '$3.75' },
+      { name: 'Chocolate Milk',              price: '$4.15' },
     ],
   },
   {
@@ -246,25 +320,26 @@ const drinksAndSides: MenuSection[] = [
     category: 'Sides',
     icon: 'add_circle',
     items: [
-      { name: 'Bacon, Ham, Sausage',   price: '$4.70' },
-      { name: 'Corned Beef Hash',      price: '$4.70' },
-      { name: 'Chicken Apple Sausage', price: '$4.70' },
-      { name: 'Biscuits',              price: '$3.05' },
-      { name: 'Toast',                 price: '$3.05' },
-      { name: 'Hash Browns',           price: '$3.05' },
-      { name: 'Brunch Potatoes',       price: '$3.05' },
-      { name: 'Grits',                 price: '$3.05' },
-      { name: 'One Egg',               price: '$2.05' },
-      { name: 'Avocado',               price: '$2.50' },
-      { name: 'One Pancake',           price: '$3.85' },
-      { name: 'Sliced Tomato',         price: '$2.75' },
-      { name: 'One Slice French Toast',price: '$4.40' },
-      { name: 'Soup Bowl',             price: '$5.25' },
-      { name: 'Soup Cup',              price: '$3.05' },
-      { name: 'French Fries',          price: '$3.05' },
-      { name: 'Fresh Fruit Bowl',      price: '$5.25' },
-      { name: 'Fresh Fruit Cup',       price: '$4.15' },
-      { name: 'Side Salad',            price: '$4.15' },
+      { name: 'Bacon, Ham, Sausage',   price: '$5.70' },
+      { name: 'Corned Beef Hash',      price: '$5.70' },
+      { name: 'Chicken Apple Sausage', price: '$5.70' },
+      { name: 'Biscuits',              price: '$4.05' },
+      { name: 'Toast',                 price: '$4.05' },
+      { name: 'Hash Browns',           price: '$4.05' },
+      { name: 'Brunch Potatoes',       price: '$4.05' },
+      { name: 'Grits',                 price: '$4.05' },
+      { name: 'Smoky Grits',          price: '$5.05' },
+      { name: 'One Egg',               price: '$3.05' },
+      { name: 'Avocado',               price: '$3.50' },
+      { name: 'One Pancake',           price: '$4.85' },
+      { name: 'Sliced Tomato',         price: '$3.75' },
+      { name: 'One Slice French Toast',price: '$5.40' },
+      { name: 'Soup Bowl',             price: '$6.25' },
+      { name: 'Soup Cup',              price: '$4.05' },
+      { name: 'French Fries',          price: '$4.05' },
+      { name: 'Fresh Fruit Bowl',      price: '$6.25' },
+      { name: 'Fresh Fruit Cup',       price: '$5.15' },
+      { name: 'Side Salad',            price: '$5.15' },
     ],
   },
 ];
@@ -275,21 +350,11 @@ const tabs = [
   { id: 'drinks',     label: 'Drinks & Sides',  sections: drinksAndSides },
 ];
 
-// Pickup time slots: 7:00 AM – 2:30 PM, every 30 min
-const timeSlots: string[] = [];
-for (let h = 7; h <= 14; h++) {
-  for (const m of [0, 30]) {
-    const hour12 = h > 12 ? h - 12 : h;
-    const ampm   = h >= 12 ? 'PM' : 'AM';
-    const minStr = m === 0 ? '00' : '30';
-    timeSlots.push(`${hour12}:${minStr} ${ampm}`);
-  }
-}
 ---
 
 <Layout
   title="Order Online — Burleson Brunch House"
-  description="Order pickup from Burleson Brunch House in Burleson, TX. Browse our full breakfast and lunch menu and place your order online. Ready in about 20 minutes."
+  description="Order pickup from Burleson Brunch House in Burleson, TX. Browse our full breakfast and lunch menu and place your order online. Ready in about 30 minutes."
 >
 
   <!-- ═══════════════════════════════════════
@@ -318,7 +383,7 @@ for (let h = 7; h <= 14; h++) {
   <div class="bg-primary">
     <div class="max-w-7xl mx-auto px-6 md:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
       <p class="text-on-primary/90 text-sm">
-        Select your items below · Payment due at pickup · Ready in ~20 min
+        Select your items below · Pay securely online · Ready in ~30 min
       </p>
       <div class="flex items-center gap-2 text-on-primary font-medium text-sm whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">schedule</span>
@@ -383,42 +448,133 @@ for (let h = 7; h <= 14; h++) {
                 <!-- Items -->
                 <div class="space-y-0">
                   {section.items.map((item, iIdx) => (
-                    <div
-                      data-row={`${section.id}-${iIdx}`}
-                      class="item-row flex items-center justify-between gap-4 py-3.5 border-b border-outline-variant/20 last:border-0 rounded-xl transition-all duration-300 -mx-2 px-2"
-                    >
-                      <div class="flex items-baseline gap-3 min-w-0">
-                        <span class="font-body text-on-surface text-sm leading-snug">{item.name}</span>
-                        <span class="text-tertiary font-semibold text-sm whitespace-nowrap tabular-nums flex-shrink-0">{item.price}</span>
+                    <div class="border-b border-outline-variant/15 last:border-0">
+
+                      <!-- Item row -->
+                      <div
+                        data-row={`${section.id}-${iIdx}`}
+                        class="item-row flex items-center justify-between gap-4 py-3.5 rounded-xl transition-all duration-200 -mx-2 px-2"
+                      >
+                        <div class="flex items-baseline gap-3 min-w-0">
+                          <span class="font-body text-on-surface text-sm leading-snug">{item.name}</span>
+                          <span class="text-tertiary font-semibold text-sm whitespace-nowrap tabular-nums flex-shrink-0">{item.price}</span>
+                        </div>
+
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                          <button
+                            data-action="decrease"
+                            data-item-id={`${section.id}-${iIdx}`}
+                            data-item-name={item.name}
+                            data-item-price={item.price.slice(1)}
+                            data-item-section={section.category}
+                            data-item-sides-required={item.sidesRequired ?? 0}
+                            disabled
+                            aria-label={`Remove ${item.name}`}
+                            class="w-8 h-8 rounded-lg flex items-center justify-center text-xl font-light text-on-surface bg-surface-container-high hover:bg-primary hover:text-on-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-200 leading-none"
+                          >−</button>
+
+                          <span
+                            data-qty={`${section.id}-${iIdx}`}
+                            class="w-6 text-center font-semibold text-on-surface tabular-nums text-sm select-none"
+                          >0</span>
+
+                          <button
+                            data-action="increase"
+                            data-item-id={`${section.id}-${iIdx}`}
+                            data-item-name={item.name}
+                            data-item-price={item.price.slice(1)}
+                            data-item-section={section.category}
+                            data-item-sides-required={item.sidesRequired ?? 0}
+                            aria-label={`Add ${item.name}`}
+                            class="w-8 h-8 rounded-xl flex items-center justify-center text-xl font-light bg-primary text-on-primary hover:opacity-85 transition-all duration-200 leading-none"
+                          >+</button>
+                        </div>
                       </div>
 
-                      <div class="flex items-center gap-2 flex-shrink-0">
-                        <button
-                          data-action="decrease"
-                          data-item-id={`${section.id}-${iIdx}`}
-                          data-item-name={item.name}
-                          data-item-price={item.price.slice(1)}
-                          data-item-section={section.category}
-                          disabled
-                          aria-label={`Remove ${item.name}`}
-                          class="w-8 h-8 rounded-lg flex items-center justify-center text-xl font-light text-on-surface bg-surface-container-high hover:bg-primary hover:text-on-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-200 leading-none"
-                        >−</button>
+                      <!-- Side picker -->
+                      {(item.sidesRequired ?? 0) > 0 && (() => {
+                        const pool     = (item.sidesPool ?? section.sidesPool ?? breakfastSides).map(normalizeSide);
+                        const upcharges = Object.fromEntries(pool.filter(s => s.upcharge > 0).map(s => [s.name, s.upcharge]));
+                        return (
+                          <div
+                            data-side-picker={`${section.id}-${iIdx}`}
+                            data-side-upcharges={JSON.stringify(upcharges)}
+                            class="hidden picker-reveal pb-3 px-1"
+                          >
+                            <div class="bg-primary-container/20 border border-primary/10 rounded-xl p-3">
+                              <p class="text-xs font-semibold uppercase tracking-widest text-primary mb-2.5 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm leading-none">restaurant_menu</span>
+                                Choose your {(item.sidesRequired ?? 0) > 1 ? `${item.sidesRequired} sides` : 'side'}
+                              </p>
+                              <div class="flex flex-col gap-2">
+                                {Array.from({ length: item.sidesRequired! }).map((_, slotIdx) => (
+                                  <div class="relative">
+                                    <select
+                                      data-picker-slot={slotIdx}
+                                      class="w-full appearance-none bg-surface/80 border border-primary/15 rounded-lg px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 pr-8"
+                                    >
+                                      <option value="">Side {slotIdx + 1}…</option>
+                                      {pool.map(s => (
+                                        <option value={s.name}>
+                                          {s.name}{s.upcharge > 0 ? ` (+$${s.upcharge})` : ''}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary/50 text-base pointer-events-none">expand_more</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
-                        <span
-                          data-qty={`${section.id}-${iIdx}`}
-                          class="w-6 text-center font-semibold text-on-surface tabular-nums text-sm select-none"
-                        >0</span>
+                      <!-- Upgrade picker (item-level overrides section-level) -->
+                      {(item.upgrades ?? section.upgrades ?? []).length > 0 && (() => {
+                        const ups   = (item.upgrades ?? section.upgrades)!;
+                        const label = item.upgrades ? (item.upgradeLabel ?? 'Add on?')    : 'Add a scoop?';
+                        const icon  = item.upgrades ? (item.upgradeIcon  ?? 'add_circle') : 'ice_cream';
+                        return (
+                          <div
+                            data-upgrade-picker={`${section.id}-${iIdx}`}
+                            class="hidden picker-reveal pb-3 px-1"
+                          >
+                            <div class="bg-surface-container border border-outline-variant/20 rounded-xl p-3">
+                              <p class="text-xs font-semibold uppercase tracking-widest text-on-surface-variant/70 mb-2.5 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm leading-none">{icon}</span>
+                                {label}
+                                <span class="font-normal normal-case tracking-normal text-on-surface-variant/50">(optional)</span>
+                              </p>
+                              <div class="flex flex-wrap gap-2">
+                                <button
+                                  type="button"
+                                  data-upgrade-btn
+                                  data-upgrade-name=""
+                                  data-upgrade-price="0"
+                                  data-upgrade-for={`${section.id}-${iIdx}`}
+                                  class="upgrade-chip is-selected inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-outline-variant/40 text-on-surface-variant bg-transparent hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200"
+                                >
+                                  No thanks
+                                </button>
+                                {ups.map(u => (
+                                  <button
+                                    type="button"
+                                    data-upgrade-btn
+                                    data-upgrade-name={u.name}
+                                    data-upgrade-price={u.price}
+                                    data-upgrade-for={`${section.id}-${iIdx}`}
+                                    class="upgrade-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-outline-variant/40 text-on-surface-variant bg-transparent hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200"
+                                  >
+                                    {u.name}
+                                    <span class="font-bold text-tertiary">+${u.price}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
-                        <button
-                          data-action="increase"
-                          data-item-id={`${section.id}-${iIdx}`}
-                          data-item-name={item.name}
-                          data-item-price={item.price.slice(1)}
-                          data-item-section={section.category}
-                          aria-label={`Add ${item.name}`}
-                          class="w-8 h-8 rounded-xl flex items-center justify-center text-xl font-light bg-primary text-on-primary hover:opacity-85 transition-all duration-200 leading-none"
-                        >+</button>
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -504,25 +660,14 @@ for (let h = 7; h <= 14; h++) {
                 </div>
               </div>
 
-              <div>
-                <label for="pickup-time" class="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-1.5">
-                  Pickup Time
-                </label>
-                <div class="relative">
-                  <select
-                    id="pickup-time"
-                    name="pickup_time"
-                    required
-                    class="w-full appearance-none bg-surface-variant rounded-xl px-4 py-3 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all duration-300 pr-10"
-                  >
-                    <option value="" disabled selected>Select a time…</option>
-                    {timeSlots.map(slot => (
-                      <option value={slot}>{slot}</option>
-                    ))}
-                  </select>
-                  <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg pointer-events-none">
-                    expand_more
-                  </span>
+              <!-- Ready time callout -->
+              <div class="flex items-center gap-4 bg-primary/10 border border-primary/25 rounded-2xl px-5 py-4">
+                <div class="flex-shrink-0 w-11 h-11 rounded-full bg-primary flex items-center justify-center editorial-shadow">
+                  <span class="material-symbols-outlined text-on-primary text-xl" style="font-variation-settings:'FILL' 1;">timer</span>
+                </div>
+                <div>
+                  <p class="font-headline text-base italic text-on-surface leading-tight">Ready in ~30 minutes</p>
+                  <p class="text-xs text-on-surface-variant mt-0.5">We'll have your order hot and ready for pickup shortly after you pay.</p>
                 </div>
               </div>
 
@@ -616,6 +761,22 @@ for (let h = 7; h <= 14; h++) {
     background-color: rgb(210 232 217 / 0.3);
   }
 
+  /* Picker entrance animation */
+  @keyframes pickerReveal {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .picker-reveal:not(.hidden) {
+    animation: pickerReveal 0.2s ease-out;
+  }
+
+  /* Active upgrade chip */
+  .upgrade-chip.is-selected {
+    background-color: rgb(var(--color-primary) / 0.12);
+    border-color: rgb(var(--color-primary) / 0.5);
+    color: rgb(var(--color-primary));
+  }
+
   /* Hide scrollbar on tab strip */
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
@@ -654,7 +815,16 @@ for (let h = 7; h <= 14; h++) {
   // ─────────────────────────────────────────
   //  CART STATE
   // ─────────────────────────────────────────
-  interface CartEntry { name: string; price: number; qty: number; section: string; }
+  interface CartEntry {
+    name: string;
+    price: number;
+    qty: number;
+    section: string;
+    sidesRequired: number;
+    selectedSides: string[];
+    sideUpchargeMap: Record<string, number>;
+    upgrade: { name: string; price: number } | null;
+  }
   const cart = new Map<string, CartEntry>();
 
 
@@ -665,12 +835,19 @@ for (let h = 7; h <= 14; h++) {
     const btn = (e.target as Element).closest<HTMLButtonElement>('[data-action]');
     if (!btn?.dataset.action) return;
 
-    const { action, itemId, itemName, itemPrice, itemSection } = btn.dataset;
+    const { action, itemId, itemName, itemPrice, itemSection, itemSidesRequired } = btn.dataset;
     if (!itemId || (action !== 'increase' && action !== 'decrease')) return;
 
-    const price    = parseFloat(itemPrice ?? '0');
-    const existing = cart.get(itemId) ?? { name: itemName!, price, qty: 0, section: itemSection! };
-    const newQty   = Math.max(0, existing.qty + (action === 'increase' ? 1 : -1));
+    const price         = parseFloat(itemPrice ?? '0');
+    const sidesRequired = parseInt(itemSidesRequired ?? '0');
+    const pickerEl      = document.querySelector<HTMLElement>(`[data-side-picker="${itemId}"]`);
+    const sideUpchargeMap: Record<string, number> =
+      pickerEl ? JSON.parse(pickerEl.dataset.sideUpcharges ?? '{}') : {};
+    const existing      = cart.get(itemId) ?? {
+      name: itemName!, price, qty: 0, section: itemSection!,
+      sidesRequired, selectedSides: [], sideUpchargeMap, upgrade: null,
+    };
+    const newQty = Math.max(0, existing.qty + (action === 'increase' ? 1 : -1));
 
     if (newQty === 0) {
       cart.delete(itemId);
@@ -690,6 +867,78 @@ for (let h = 7; h <= 14; h++) {
     const decBtn = document.querySelector<HTMLButtonElement>(`[data-action="decrease"][data-item-id="${itemId}"]`);
     if (decBtn) decBtn.disabled = newQty === 0;
 
+    // Show / hide side picker
+    const picker = document.querySelector<HTMLElement>(`[data-side-picker="${itemId}"]`);
+    if (picker) {
+      if (newQty > 0) {
+        picker.classList.remove('hidden');
+      } else {
+        picker.classList.add('hidden');
+        picker.querySelectorAll<HTMLSelectElement>('select').forEach(s => { s.value = ''; });
+      }
+    }
+
+    // Show / hide upgrade picker
+    const upgradePicker = document.querySelector<HTMLElement>(`[data-upgrade-picker="${itemId}"]`);
+    if (upgradePicker) {
+      if (newQty > 0) {
+        upgradePicker.classList.remove('hidden');
+      } else {
+        upgradePicker.classList.add('hidden');
+        // Reset: mark "No thanks" selected, clear all others
+        upgradePicker.querySelectorAll<HTMLElement>('[data-upgrade-btn]').forEach(b => {
+          b.classList.toggle('is-selected', (b as HTMLButtonElement).dataset.upgradeName === '');
+        });
+        const entry = cart.get(itemId);
+        if (entry) { entry.upgrade = null; cart.set(itemId, entry); }
+      }
+    }
+
+    renderSummary();
+  });
+
+
+  // ─────────────────────────────────────────
+  //  SIDE PICKER CHANGE HANDLER
+  // ─────────────────────────────────────────
+  document.addEventListener('change', e => {
+    const select = (e.target as Element).closest<HTMLSelectElement>('select[data-picker-slot]');
+    if (!select) return;
+    const picker = select.closest<HTMLElement>('[data-side-picker]');
+    if (!picker) return;
+    const itemId = picker.dataset.sidePicker!;
+    const entry  = cart.get(itemId);
+    if (!entry) return;
+    const selects = Array.from(picker.querySelectorAll<HTMLSelectElement>('select[data-picker-slot]'));
+    entry.selectedSides = selects.map(s => s.value);
+    cart.set(itemId, entry);
+    renderSummary();
+  });
+
+
+  // ─────────────────────────────────────────
+  //  UPGRADE CHIP CLICK HANDLER
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const chip = (e.target as Element).closest<HTMLButtonElement>('[data-upgrade-btn]');
+    if (!chip) return;
+
+    const itemId      = chip.dataset.upgradeFor!;
+    const upgradeName = chip.dataset.upgradeName ?? '';
+    const upgradePrice = parseFloat(chip.dataset.upgradePrice ?? '0');
+    const entry = cart.get(itemId);
+    if (!entry) return;
+
+    // "No thanks" chip clears the upgrade; others set it
+    entry.upgrade = upgradeName ? { name: upgradeName, price: upgradePrice } : null;
+    cart.set(itemId, entry);
+
+    // Exactly one chip is always selected
+    const picker = chip.closest<HTMLElement>('[data-upgrade-picker]');
+    picker?.querySelectorAll<HTMLElement>('[data-upgrade-btn]').forEach(b => {
+      b.classList.toggle('is-selected', b === chip);
+    });
+
     renderSummary();
   });
 
@@ -700,7 +949,11 @@ for (let h = 7; h <= 14; h++) {
   function renderSummary() {
     let total = 0;
     let count = 0;
-    cart.forEach(item => { total += item.price * item.qty; count += item.qty; });
+    cart.forEach(item => {
+      const sideUp = item.selectedSides.reduce((s, side) => s + (item.sideUpchargeMap[side] ?? 0), 0);
+      total += (item.price + (item.upgrade?.price ?? 0) + sideUp) * item.qty;
+      count += item.qty;
+    });
 
     // Shared total / count elements (desktop sidebar + mobile bar both use data-cart-*)
     document.querySelectorAll<HTMLElement>('[data-cart-total]').forEach(el => {
@@ -733,14 +986,39 @@ for (let h = 7; h <= 14; h++) {
       });
 
       let html = '';
+      let hasIncompleteSides = false;
+
       bySec.forEach((items, sec) => {
         html += `<p class="text-xs uppercase tracking-widest text-on-surface-variant/50 mt-4 mb-1 first:mt-0">${sec}</p>`;
         items.forEach(item => {
+          let metaHtml = '';
+          if (item.sidesRequired > 0) {
+            const filled = item.selectedSides.filter(s => s !== '');
+            if (filled.length === item.sidesRequired) {
+              const sidesDisplay = filled.map(s => {
+                const up = item.sideUpchargeMap[s];
+                return up ? `${s} (+$${up})` : s;
+              }).join(' &amp; ');
+              metaHtml += `<p class="text-xs text-on-surface-variant/70 mt-0.5">with ${sidesDisplay}</p>`;
+            } else {
+              const remaining = item.sidesRequired - filled.length;
+              metaHtml += `<p class="text-xs text-amber-600 mt-0.5">⚠ Choose ${remaining} more side${remaining > 1 ? 's' : ''}</p>`;
+              hasIncompleteSides = true;
+            }
+          }
+          if (item.upgrade) {
+            metaHtml += `<p class="text-xs text-tertiary/80 mt-0.5">+ ${item.upgrade.name}</p>`;
+          }
+          const sideUp    = item.selectedSides.reduce((s, side) => s + (item.sideUpchargeMap[side] ?? 0), 0);
+          const lineTotal = (item.price + (item.upgrade?.price ?? 0) + sideUp) * item.qty;
           html += `
-            <div class="flex justify-between items-baseline py-1 gap-3">
-              <span class="text-on-surface text-sm leading-snug">${item.qty}× ${item.name}</span>
-              <span class="text-tertiary font-semibold text-sm whitespace-nowrap tabular-nums flex-shrink-0">
-                $${(item.price * item.qty).toFixed(2)}
+            <div class="flex justify-between items-start py-1 gap-3">
+              <div class="min-w-0">
+                <span class="text-on-surface text-sm leading-snug">${item.qty}× ${item.name}</span>
+                ${metaHtml}
+              </div>
+              <span class="text-tertiary font-semibold text-sm whitespace-nowrap tabular-nums flex-shrink-0 pt-0.5">
+                $${lineTotal.toFixed(2)}
               </span>
             </div>`;
         });
@@ -749,12 +1027,22 @@ for (let h = 7; h <= 14; h++) {
       if (listEl) { listEl.innerHTML = html; listEl.classList.remove('hidden'); }
     }
 
+    // Check for incomplete side selections
+    let hasIncompleteSides = false;
+    cart.forEach(item => {
+      if (item.sidesRequired > 0) {
+        const filled = item.selectedSides.filter(s => s !== '').length;
+        if (filled < item.sidesRequired) hasIncompleteSides = true;
+      }
+    });
+
     // Submit button state
+    const canSubmit = count > 0 && !hasIncompleteSides;
     const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
     if (submitBtn) {
-      submitBtn.disabled = count === 0;
-      submitBtn.classList.toggle('opacity-35',        count === 0);
-      submitBtn.classList.toggle('cursor-not-allowed',count === 0);
+      submitBtn.disabled = !canSubmit;
+      submitBtn.classList.toggle('opacity-35',        !canSubmit);
+      submitBtn.classList.toggle('cursor-not-allowed',!canSubmit);
     }
 
     // Mobile bottom bar
@@ -782,14 +1070,21 @@ for (let h = 7; h <= 14; h++) {
     cartError?.classList.add('hidden');
 
     // Collect form values
-    const name        = (document.getElementById('customer-name')  as HTMLInputElement)?.value.trim();
-    const phone       = (document.getElementById('customer-phone') as HTMLInputElement)?.value.trim();
-    const pickup_time = (document.getElementById('pickup-time')    as HTMLSelectElement)?.value;
-    const notes       = (document.getElementById('order-notes')    as HTMLTextAreaElement)?.value.trim();
+    const name  = (document.getElementById('customer-name')  as HTMLInputElement)?.value.trim();
+    const phone = (document.getElementById('customer-phone') as HTMLInputElement)?.value.trim();
+    const notes = (document.getElementById('order-notes')    as HTMLTextAreaElement)?.value.trim();
 
-    // Build items array for Stripe line items
+    // Build items array for Stripe; append sides + upgrade to name, roll upgrade into price
     const items: Array<{ name: string; price: number; qty: number }> = [];
-    cart.forEach(item => items.push({ name: item.name, price: item.price, qty: item.qty }));
+    cart.forEach(item => {
+      let itemName = item.name;
+      const filled = item.selectedSides.filter(s => s !== '');
+      if (filled.length > 0)  itemName += ` (${filled.join(', ')})`;
+      if (item.upgrade)        itemName += ` + ${item.upgrade.name}`;
+      const sideUp    = item.selectedSides.reduce((s, side) => s + (item.sideUpchargeMap[side] ?? 0), 0);
+      const unitPrice = item.price + (item.upgrade?.price ?? 0) + sideUp;
+      items.push({ name: itemName, price: unitPrice, qty: item.qty });
+    });
 
     // Loading state
     if (submitBtn)  submitBtn.disabled = true;
@@ -803,7 +1098,6 @@ for (let h = 7; h <= 14; h++) {
           items,
           name,
           phone,
-          pickup_time,
           notes,
           origin: window.location.origin,
         }),
