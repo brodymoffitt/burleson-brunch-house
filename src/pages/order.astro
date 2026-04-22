@@ -899,6 +899,19 @@ const tabs = [
   // ─────────────────────────────────────────
   //  SIDE PICKER CHANGE HANDLER
   // ─────────────────────────────────────────
+  function syncSidePickers(picker: HTMLElement) {
+    const selects = Array.from(picker.querySelectorAll<HTMLSelectElement>('select[data-picker-slot]'));
+    selects.forEach(sel => {
+      Array.from(sel.options).forEach(opt => { opt.disabled = false; });
+    });
+    selects.forEach((sel, i) => {
+      const taken = selects.filter((_, j) => j !== i).map(s => s.value).filter(v => v !== '');
+      Array.from(sel.options).forEach(opt => {
+        if (opt.value !== '' && taken.includes(opt.value)) opt.disabled = true;
+      });
+    });
+  }
+
   document.addEventListener('change', e => {
     const select = (e.target as Element).closest<HTMLSelectElement>('select[data-picker-slot]');
     if (!select) return;
@@ -910,6 +923,7 @@ const tabs = [
     const selects = Array.from(picker.querySelectorAll<HTMLSelectElement>('select[data-picker-slot]'));
     entry.selectedSides = selects.map(s => s.value);
     cart.set(itemId, entry);
+    syncSidePickers(picker);
     renderSummary();
   });
 
