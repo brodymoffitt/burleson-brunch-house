@@ -17,8 +17,7 @@
     "@astrojs/tailwind": "^5.1.0",
     "@astrojs/vercel": "^7.8.2",
     "astro": "^4.15.0",
-    "stripe": "^22.0.1",
-    "tailwindcss": "^3.4.0"
+"tailwindcss": "^3.4.0"
   },
   "devDependencies": {
     "heic-convert": "^2.1.0",

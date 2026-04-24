@@ -16,11 +16,13 @@ type MenuItem       = {
   upgrades?: SectionUpgrade[]; // item-level upgrades (overrides section.upgrades)
   upgradeLabel?: string;
   upgradeIcon?: string;
+  hasEggs?: boolean;
 };
 type MenuSection    = {
   id: string; category: string; icon: string; items: MenuItem[];
   sidesPool?: SideOption[];    // section-level side options (fallback to breakfastSides)
   upgrades?: SectionUpgrade[];
+  hasEggs?: boolean;
 };
 
 const normalizeSide = (s: SideOption): { name: string; upcharge: number } =>
@@ -54,14 +56,50 @@ const lunchSides: SideOption[] = [
   'French Fries', 'Soup', 'Salad', 'Fresh Fruit',
 ];
 
+const generalUpgrades: SectionUpgrade[] = [
+  { name: 'Sub Oreo Pancakes',        price: 1.00 },
+  { name: 'Sub Chocolate Chip Cakes', price: 1.00 },
+  { name: 'Fruit Pancakes',           price: 1.50 },
+  { name: 'Pecan Pancakes',           price: 1.50 },
+  { name: 'Sub Crepes',               price: 2.50 },
+  { name: 'Berry Topping',            price: 2.99 },
+  { name: 'Sub French Toast',         price: 3.00 },
+  { name: 'Sub Fruit Crepes',         price: 3.50 },
+  { name: 'Sub Waffle',               price: 4.00 },
+  { name: 'Sub Fruit French Toast',   price: 4.50 },
+  { name: 'Sub Fruit Waffle',         price: 5.50 },
+  { name: 'Add Cream Cheese',         price: 1.00 },
+  { name: 'Add Blueberry',            price: 1.50 },
+  { name: 'Add Strawberries',         price: 1.50 },
+  { name: 'Add Nutella',              price: 1.00 },
+  { name: 'Add Bananas',              price: 1.50 },
+];
+
+const eggStyles: Array<{ name: string; price: number }> = [
+  { name: 'Scrambled',           price: 0    },
+  { name: 'Soft Scrambled',      price: 0    },
+  { name: 'Well Scrambled',      price: 0    },
+  { name: 'Scrambled w/ Cheese', price: 0.99 },
+  { name: 'Over Easy',           price: 0    },
+  { name: 'Over Medium',         price: 0    },
+  { name: 'Over Med-Well',       price: 0    },
+  { name: 'Over Well',           price: 0    },
+  { name: 'Sunny Side Up',       price: 0    },
+  { name: 'Soft Poached',        price: 0    },
+  { name: 'Poached Med',         price: 0    },
+  { name: 'Poached Well',        price: 0    },
+  { name: 'Egg White',           price: 1    },
+  { name: 'Egg White w/ Cheese', price: 1.99 },
+];
+
 const bbhFavorites: MenuSection = {
   id: 'bbh-fav',
   category: 'Burleson Brunch House Favorites',
   icon: 'restaurant',
   items: [
-    { name: 'Breakfast Tacos', price: '$14.00' },
+    { name: 'Breakfast Tacos', price: '$14.00', hasEggs: true },
     {
-      name: 'Brunch House Combo', price: '$11.50', sidesRequired: 1,
+      name: 'Brunch House Combo', price: '$11.50', sidesRequired: 1, hasEggs: true,
       upgrades: [
         { name: 'French Toast', price: 2 },
         { name: 'Crepes',       price: 2 },
@@ -71,7 +109,7 @@ const bbhFavorites: MenuSection = {
       upgradeIcon:  'brunch_dining',
     },
     {
-      name: 'Migas', price: '$11.75', sidesRequired: 1,
+      name: 'Migas', price: '$11.75', sidesRequired: 1, hasEggs: true,
       upgrades: [
         { name: 'Bacon',   price: 2 },
         { name: 'Ham',     price: 2 },
@@ -81,7 +119,7 @@ const bbhFavorites: MenuSection = {
       upgradeLabel: 'Add meat?',
       upgradeIcon:  'add_circle',
     },
-    { name: 'Breakfast Burrito',        price: '$12.75', sidesRequired: 1, sidesPool: potatoSides },
+    { name: 'Breakfast Burrito',        price: '$12.75', sidesRequired: 1, sidesPool: potatoSides, hasEggs: true },
     { name: 'Biscuits and Gravy',       price: '$9.25',  sidesRequired: 1, sidesPool: potatoSides },
     { name: 'Texas Biscuits and Gravy', price: '$9.99',  sidesRequired: 1, sidesPool: potatoSides },
   ],
@@ -92,6 +130,8 @@ const breakfast: MenuSection[] = [
     id: 'eggcelent',
     category: 'Eggcelent',
     icon: 'egg_alt',
+    hasEggs: true,
+    sidesPool: ['Hash Browns', 'Brunch Potatoes', 'Toast', 'Grits', 'Fresh Fruit Cup', 'Biscuit', 'Pancakes'],
     items: [
       { name: 'All American',                   price: '$12.75', sidesRequired: 2 },
       { name: 'Corned Beef Hash',               price: '$13.85', sidesRequired: 2 },
@@ -105,6 +145,8 @@ const breakfast: MenuSection[] = [
     id: 'omelettes',
     category: 'Traditional French Rolled Omelettes',
     icon: 'dining',
+    hasEggs: true,
+    sidesPool: ['Hash Browns', 'Brunch Potatoes', 'Toast', 'Grits', 'Fresh Fruit Cup', 'Biscuit', 'Pancakes'],
     items: [
       { name: 'The Floridian',     price: '$18.99', sidesRequired: 2 },
       { name: 'Garden Lovers',     price: '$14.49', sidesRequired: 2 },
@@ -123,6 +165,7 @@ const breakfast: MenuSection[] = [
     id: 'skillets',
     category: 'Skillets',
     icon: 'local_fire_department',
+    hasEggs: true,
     sidesPool: ['Toast', 'Biscuit', 'Pancakes'],
     items: [
       { name: 'Steak Skillet',    price: '$18.99', sidesRequired: 1 },
@@ -178,15 +221,16 @@ const breakfast: MenuSection[] = [
     category: 'Homemade French Crepes',
     icon: 'blur_circular',
     items: [
-      { name: 'Original Crepes',       price: '$8.99',  sidesRequired: 1 },
-      { name: 'Banana Nutella Crepes', price: '$9.99',  sidesRequired: 1 },
-      { name: 'Triple Berry Crepes',   price: '$12.99', sidesRequired: 1 },
+      { name: 'Original Crepes',       price: '$8.99'  },
+      { name: 'Banana Nutella Crepes', price: '$9.99'  },
+      { name: 'Triple Berry Crepes',   price: '$12.99' },
     ],
   },
   {
     id: 'benedicts',
     category: 'Benedicts',
     icon: 'egg_alt',
+    hasEggs: true,
     sidesPool: benedictAndHealthySides,
     items: [
       { name: 'Crab Benedict',            price: '$18.99', sidesRequired: 1 },
@@ -204,9 +248,9 @@ const breakfast: MenuSection[] = [
     icon: 'eco',
     sidesPool: benedictAndHealthySides,
     items: [
-      { name: 'Hercules Breakfast',    price: '$11.49', sidesRequired: 1 },
-      { name: 'Skinny Migas',          price: '$10.49', sidesRequired: 1 },
-      { name: 'Skinny Florentine',     price: '$11.00', sidesRequired: 1 },
+      { name: 'Hercules Breakfast',    price: '$11.49', sidesRequired: 1, hasEggs: true },
+      { name: 'Skinny Migas',          price: '$10.49', sidesRequired: 1, hasEggs: true },
+      { name: 'Skinny Florentine',     price: '$11.00', sidesRequired: 1, hasEggs: true },
       { name: 'Old Fashioned Oatmeal', price: '$6.60',  sidesRequired: 1 },
       { name: 'California Toast',      price: '$10.25', sidesRequired: 1 },
     ],
@@ -466,6 +510,7 @@ const tabs = [
                             data-item-price={item.price.slice(1)}
                             data-item-section={section.category}
                             data-item-sides-required={item.sidesRequired ?? 0}
+                            data-item-has-eggs={String(item.hasEggs ?? section.hasEggs ?? false)}
                             disabled
                             aria-label={`Remove ${item.name}`}
                             class="w-8 h-8 rounded-lg flex items-center justify-center text-xl font-light text-on-surface bg-surface-container-high hover:bg-primary hover:text-on-primary disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-200 leading-none"
@@ -483,11 +528,95 @@ const tabs = [
                             data-item-price={item.price.slice(1)}
                             data-item-section={section.category}
                             data-item-sides-required={item.sidesRequired ?? 0}
+                            data-item-has-eggs={String(item.hasEggs ?? section.hasEggs ?? false)}
                             aria-label={`Add ${item.name}`}
                             class="w-8 h-8 rounded-xl flex items-center justify-center text-xl font-light bg-primary text-on-primary hover:opacity-85 transition-all duration-200 leading-none"
                           >+</button>
                         </div>
                       </div>
+
+                      <!-- Egg style picker -->
+                      {(item.hasEggs ?? section.hasEggs ?? false) && (
+                        <div
+                          data-egg-picker={`${section.id}-${iIdx}`}
+                          class="hidden picker-reveal pb-3 px-1"
+                        >
+                          <div class="border border-outline-variant/20 rounded-xl overflow-hidden">
+                            <button
+                              type="button"
+                              data-egg-toggle={`${section.id}-${iIdx}`}
+                              class="w-full flex items-center justify-between px-4 py-3 text-sm bg-surface-container hover:bg-surface-container-high transition-colors duration-150"
+                            >
+                              <span class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base text-primary">egg_alt</span>
+                                <span class="font-semibold uppercase tracking-widest text-xs text-on-surface">Egg Style</span>
+                                <span class="text-amber-600 text-[10px] font-bold uppercase tracking-widest">required</span>
+                              </span>
+                              <span
+                                class="material-symbols-outlined text-on-surface-variant transition-transform duration-200 rotate-180"
+                                data-egg-chevron={`${section.id}-${iIdx}`}
+                              >expand_more</span>
+                            </button>
+                            <div data-egg-panel={`${section.id}-${iIdx}`} class="px-3 pb-3 pt-2 bg-surface-container/40">
+                              <div class="grid grid-cols-3 gap-1.5 mt-1">
+                                {eggStyles.map(egg => (
+                                  <button
+                                    type="button"
+                                    data-egg-btn
+                                    data-egg-for={`${section.id}-${iIdx}`}
+                                    data-egg-name={egg.name}
+                                    data-egg-price={String(egg.price)}
+                                    class="egg-chip flex flex-col items-center justify-center px-2 py-2.5 rounded-xl text-xs font-medium border border-outline-variant/40 text-on-surface-variant bg-transparent hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200 text-center leading-tight"
+                                  >
+                                    <span>{egg.name}</span>
+                                    {egg.price > 0 && <span class="font-bold text-tertiary mt-0.5">+${egg.price.toFixed(2)}</span>}
+                                  </button>
+                                ))}
+                              </div>
+                              <div class="flex justify-end mt-3">
+                                <button
+                                  type="button"
+                                  data-egg-next={`${section.id}-${iIdx}`}
+                                  disabled
+                                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-on-primary disabled:opacity-35 disabled:cursor-not-allowed hover:opacity-85 transition-all duration-200"
+                                >
+                                  {(item.sidesRequired ?? 0) > 0 ? 'Choose Sides' : 'Done'}
+                                  <span class="material-symbols-outlined text-base">arrow_forward</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <!-- Temperature picker (steak items) -->
+                      {item.name.toLowerCase().includes('steak') && (
+                        <div
+                          data-temp-picker={`${section.id}-${iIdx}`}
+                          class="hidden picker-reveal pb-3 px-1"
+                        >
+                          <div class="bg-surface-container border border-outline-variant/20 rounded-xl p-3">
+                            <p class="text-xs font-semibold uppercase tracking-widest text-on-surface-variant/70 mb-2.5 flex items-center gap-1.5">
+                              <span class="material-symbols-outlined text-sm leading-none">thermometer</span>
+                              Temperature
+                              <span class="text-amber-600 text-[10px] font-bold uppercase tracking-widest ml-1">required</span>
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                              {['Rare', 'Med Rare', 'Med', 'Med Well', 'Well Done'].map(temp => (
+                                <button
+                                  type="button"
+                                  data-temp-btn
+                                  data-temp-for={`${section.id}-${iIdx}`}
+                                  data-temp-name={temp}
+                                  class="upgrade-chip inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border border-outline-variant/40 text-on-surface-variant bg-transparent hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200"
+                                >
+                                  {temp}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       <!-- Side picker -->
                       {(item.sidesRequired ?? 0) > 0 && (() => {
@@ -497,29 +626,32 @@ const tabs = [
                           <div
                             data-side-picker={`${section.id}-${iIdx}`}
                             data-side-upcharges={JSON.stringify(upcharges)}
+                            data-sides-required={item.sidesRequired}
                             class="hidden picker-reveal pb-3 px-1"
                           >
                             <div class="bg-primary-container/20 border border-primary/10 rounded-xl p-3">
-                              <p class="text-xs font-semibold uppercase tracking-widest text-primary mb-2.5 flex items-center gap-1.5">
+                              <p class="text-xs font-semibold uppercase tracking-widest text-primary mb-3 flex items-center gap-1.5">
                                 <span class="material-symbols-outlined text-sm leading-none">restaurant_menu</span>
                                 Choose your {(item.sidesRequired ?? 0) > 1 ? `${item.sidesRequired} sides` : 'side'}
+                                {(item.sidesRequired ?? 0) > 1 && (
+                                  <span data-side-counter class="ml-auto font-normal normal-case tracking-normal text-primary/55 tabular-nums">0 / {item.sidesRequired}</span>
+                                )}
                               </p>
-                              <div class="flex flex-col gap-2">
-                                {Array.from({ length: item.sidesRequired! }).map((_, slotIdx) => (
-                                  <div class="relative">
-                                    <select
-                                      data-picker-slot={slotIdx}
-                                      class="w-full appearance-none bg-surface/80 border border-primary/15 rounded-lg px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 pr-8"
-                                    >
-                                      <option value="">Side {slotIdx + 1}…</option>
-                                      {pool.map(s => (
-                                        <option value={s.name}>
-                                          {s.name}{s.upcharge > 0 ? ` (+$${s.upcharge})` : ''}
-                                        </option>
-                                      ))}
-                                    </select>
-                                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary/50 text-base pointer-events-none">expand_more</span>
-                                  </div>
+                              <div class="grid grid-cols-2 gap-1.5">
+                                {pool.map(s => (
+                                  <button
+                                    type="button"
+                                    data-side-btn
+                                    data-side-name={s.name}
+                                    data-side-upcharge={String(s.upcharge)}
+                                    class="side-chip flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm border border-outline-variant/25 text-on-surface bg-surface hover:border-primary/30 hover:bg-primary/5 transition-all duration-150 text-left"
+                                  >
+                                    <span class="font-medium leading-snug">{s.name}</span>
+                                    <span class="flex items-center gap-1 flex-shrink-0">
+                                      {s.upcharge > 0 && <span class="text-xs text-tertiary font-bold">+${s.upcharge}</span>}
+                                      <span class="side-check material-symbols-outlined text-base text-primary opacity-0 transition-opacity duration-150" style="font-variation-settings:'FILL' 1;">check_circle</span>
+                                    </span>
+                                  </button>
                                 ))}
                               </div>
                             </div>
@@ -572,6 +704,82 @@ const tabs = [
                           </div>
                         );
                       })()}
+
+                      <!-- Pancake upgrade dropdown — only for items whose side pool includes Pancakes -->
+                      {(item.sidesRequired ?? 0) > 0 && (item.sidesPool ?? section.sidesPool ?? breakfastSides).some(s => (typeof s === 'string' ? s : s.name) === 'Pancakes') && (
+                        <div
+                          data-pancake-container={`${section.id}-${iIdx}`}
+                          class="hidden picker-reveal pb-3 px-1"
+                        >
+                          <div class="border border-outline-variant/20 rounded-xl overflow-hidden">
+                            <button
+                              type="button"
+                              data-pancake-toggle={`${section.id}-${iIdx}`}
+                              class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-on-surface bg-surface-container hover:bg-surface-container-high transition-colors duration-150"
+                            >
+                              <span class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base text-primary">stars</span>
+                                Upgrade your pancakes?
+                                <span class="font-normal text-xs text-on-surface-variant/60">(optional)</span>
+                              </span>
+                              <span class="material-symbols-outlined text-on-surface-variant transition-transform duration-200" data-pancake-chevron={`${section.id}-${iIdx}`}>expand_more</span>
+                            </button>
+                            <div data-pancake-panel={`${section.id}-${iIdx}`} class="hidden px-3 pb-3 pt-2 bg-surface-container/40">
+                              <div class="flex flex-wrap gap-2 mt-1">
+                                <button
+                                  type="button"
+                                  data-pancake-btn
+                                  data-upgrade-name=""
+                                  data-upgrade-price="0"
+                                  data-pancake-for={`${section.id}-${iIdx}`}
+                                  class="upgrade-chip is-selected inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-outline-variant/40 text-on-surface-variant bg-transparent hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200"
+                                >
+                                  No thanks
+                                </button>
+                                {generalUpgrades.map(u => (
+                                  <button
+                                    type="button"
+                                    data-pancake-btn
+                                    data-upgrade-name={u.name}
+                                    data-upgrade-price={u.price}
+                                    data-pancake-for={`${section.id}-${iIdx}`}
+                                    class="upgrade-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-outline-variant/40 text-on-surface-variant bg-transparent hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all duration-200"
+                                  >
+                                    {u.name}
+                                    <span class="font-bold text-tertiary">+${u.price}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <!-- Add to Order confirm button -->
+                      {((item.sidesRequired ?? 0) > 0 || (item.upgrades ?? section.upgrades ?? []).length > 0 || (item.hasEggs ?? section.hasEggs ?? false)) && (
+                        <div
+                          data-confirm={`${section.id}-${iIdx}`}
+                          class="hidden picker-reveal pb-4 px-1"
+                        >
+                          <div class="flex items-center gap-2">
+                            <button
+                              type="button"
+                              data-confirm-btn={`${section.id}-${iIdx}`}
+                              class="flex-1 bg-primary text-on-primary rounded-xl py-3 px-4 font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-85 transition-all duration-200 editorial-shadow"
+                            >
+                              <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">check_circle</span>
+                              Add to Order
+                            </button>
+                            <button
+                              type="button"
+                              data-edit-btn={`${section.id}-${iIdx}`}
+                              class="hidden px-4 py-3 rounded-xl text-sm font-medium text-primary border border-primary/30 hover:bg-primary/5 transition-all duration-200 whitespace-nowrap"
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                     </div>
                   ))}
@@ -775,9 +983,28 @@ const tabs = [
     color: rgb(var(--color-primary));
   }
 
+  /* Side button chips */
+  .side-chip.is-selected {
+    background-color: rgb(var(--color-primary) / 0.12);
+    border-color: rgb(var(--color-primary) / 0.45);
+    color: rgb(var(--color-primary));
+  }
+  .side-chip.is-selected .side-check { opacity: 1; }
+  .side-chip.is-maxed { opacity: 0.35; }
+
   /* Hide scrollbar on tab strip */
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Egg style chip */
+  .egg-chip.is-selected {
+    background-color: rgb(var(--color-primary) / 0.12);
+    border-color: rgb(var(--color-primary) / 0.45);
+    color: rgb(var(--color-primary));
+  }
+
+  /* Pancake dropdown chevron */
+  .rotate-180 { transform: rotate(180deg); }
 </style>
 
 
@@ -822,6 +1049,9 @@ const tabs = [
     selectedSides: string[];
     sideUpchargeMap: Record<string, number>;
     upgrade: { name: string; price: number } | null;
+    selectedTemp: string;
+    selectedEgg: { name: string; price: number } | null;
+    isEggRequired: boolean;
   }
   const cart = new Map<string, CartEntry>();
 
@@ -841,9 +1071,11 @@ const tabs = [
     const pickerEl      = document.querySelector<HTMLElement>(`[data-side-picker="${itemId}"]`);
     const sideUpchargeMap: Record<string, number> =
       pickerEl ? JSON.parse(pickerEl.dataset.sideUpcharges ?? '{}') : {};
+    const hasEggs       = btn.dataset.itemHasEggs === 'true';
     const existing      = cart.get(itemId) ?? {
       name: itemName!, price, qty: 0, section: itemSection!,
-      sidesRequired, selectedSides: [], sideUpchargeMap, upgrade: null,
+      sidesRequired, selectedSides: [], sideUpchargeMap, upgrade: null, selectedTemp: '',
+      selectedEgg: null, isEggRequired: hasEggs,
     };
     const newQty = Math.max(0, existing.qty + (action === 'increase' ? 1 : -1));
 
@@ -872,7 +1104,37 @@ const tabs = [
         picker.classList.remove('hidden');
       } else {
         picker.classList.add('hidden');
-        picker.querySelectorAll<HTMLSelectElement>('select').forEach(s => { s.value = ''; });
+        picker.querySelectorAll<HTMLButtonElement>('[data-side-btn]').forEach(b => {
+          b.classList.remove('is-selected', 'is-maxed');
+        });
+        const counter = picker.querySelector<HTMLElement>('[data-side-counter]');
+        if (counter) { const req = picker.dataset.sidesRequired ?? '1'; counter.textContent = `0 / ${req}`; }
+      }
+    }
+
+    // Show / hide egg picker
+    const eggPickerEl = document.querySelector<HTMLElement>(`[data-egg-picker="${itemId}"]`);
+    if (eggPickerEl) {
+      if (newQty > 0) {
+        eggPickerEl.classList.remove('hidden');
+      } else {
+        eggPickerEl.classList.add('hidden');
+        eggPickerEl.querySelector<HTMLElement>('[data-egg-panel]')?.classList.remove('hidden');
+        eggPickerEl.querySelector<HTMLElement>('[data-egg-chevron]')?.classList.add('rotate-180');
+        eggPickerEl.querySelectorAll<HTMLElement>('[data-egg-btn]').forEach(b => b.classList.remove('is-selected'));
+        const eggNextBtn = eggPickerEl.querySelector<HTMLButtonElement>('[data-egg-next]');
+        if (eggNextBtn) eggNextBtn.disabled = true;
+      }
+    }
+
+    // Show / hide temperature picker
+    const tempPicker = document.querySelector<HTMLElement>(`[data-temp-picker="${itemId}"]`);
+    if (tempPicker) {
+      if (newQty > 0) {
+        tempPicker.classList.remove('hidden');
+      } else {
+        tempPicker.classList.add('hidden');
+        tempPicker.querySelectorAll<HTMLElement>('[data-temp-btn]').forEach(b => b.classList.remove('is-selected'));
       }
     }
 
@@ -892,38 +1154,106 @@ const tabs = [
       }
     }
 
+    // Show / hide confirm button — also restore collapsed pickers if qty increases again
+    const confirmEl = document.querySelector<HTMLElement>(`[data-confirm="${itemId}"]`);
+    const editBtn   = document.querySelector<HTMLElement>(`[data-edit-btn="${itemId}"]`);
+    const confirmBtn = document.querySelector<HTMLElement>(`[data-confirm-btn="${itemId}"]`);
+    if (confirmEl) {
+      if (newQty > 0) {
+        confirmEl.classList.remove('hidden');
+        // If pickers were collapsed, re-expand them on a new qty change
+        if (editBtn && !editBtn.classList.contains('hidden')) {
+          picker?.classList.remove('hidden');
+          upgradePicker?.classList.remove('hidden');
+          if (eggPickerEl) {
+            eggPickerEl.classList.remove('hidden');
+            eggPickerEl.querySelector<HTMLElement>('[data-egg-panel]')?.classList.remove('hidden');
+            eggPickerEl.querySelector<HTMLElement>('[data-egg-chevron]')?.classList.add('rotate-180');
+          }
+          editBtn.classList.add('hidden');
+          if (confirmBtn) confirmBtn.classList.remove('hidden');
+        }
+      } else {
+        confirmEl.classList.add('hidden');
+        editBtn?.classList.add('hidden');
+        if (confirmBtn) confirmBtn.classList.remove('hidden');
+      }
+    }
+
+    // Reset pancake upgrade when item is fully removed
+    if (newQty === 0) {
+      const pc = document.querySelector<HTMLElement>(`[data-pancake-container="${itemId}"]`);
+      if (pc) {
+        pc.classList.add('hidden');
+        pc.querySelector<HTMLElement>('[data-pancake-panel]')?.classList.add('hidden');
+        pc.querySelector<HTMLElement>('[data-pancake-chevron]')?.classList.remove('rotate-180');
+        pc.querySelectorAll<HTMLElement>('[data-pancake-btn]').forEach(b => {
+          b.classList.toggle('is-selected', (b as HTMLButtonElement).dataset.upgradeName === '');
+        });
+      }
+    }
+
     renderSummary();
   });
 
 
   // ─────────────────────────────────────────
-  //  SIDE PICKER CHANGE HANDLER
+  //  SIDE BUTTON CLICK HANDLER
   // ─────────────────────────────────────────
-  function syncSidePickers(picker: HTMLElement) {
-    const selects = Array.from(picker.querySelectorAll<HTMLSelectElement>('select[data-picker-slot]'));
-    selects.forEach(sel => {
-      Array.from(sel.options).forEach(opt => { opt.disabled = false; });
-    });
-    selects.forEach((sel, i) => {
-      const taken = selects.filter((_, j) => j !== i).map(s => s.value).filter(v => v !== '');
-      Array.from(sel.options).forEach(opt => {
-        if (opt.value !== '' && taken.includes(opt.value)) opt.disabled = true;
-      });
-    });
-  }
+  document.addEventListener('click', e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-side-btn]');
+    if (!btn) return;
 
-  document.addEventListener('change', e => {
-    const select = (e.target as Element).closest<HTMLSelectElement>('select[data-picker-slot]');
-    if (!select) return;
-    const picker = select.closest<HTMLElement>('[data-side-picker]');
+    const picker = btn.closest<HTMLElement>('[data-side-picker]');
     if (!picker) return;
-    const itemId = picker.dataset.sidePicker!;
-    const entry  = cart.get(itemId);
+
+    const itemId     = picker.dataset.sidePicker!;
+    const limit      = parseInt(picker.dataset.sidesRequired ?? '1');
+    const entry      = cart.get(itemId);
     if (!entry) return;
-    const selects = Array.from(picker.querySelectorAll<HTMLSelectElement>('select[data-picker-slot]'));
-    entry.selectedSides = selects.map(s => s.value);
+
+    const sideName   = btn.dataset.sideName!;
+    const allBtns    = Array.from(picker.querySelectorAll<HTMLButtonElement>('[data-side-btn]'));
+    const isSelected = btn.classList.contains('is-selected');
+
+    if (isSelected) {
+      btn.classList.remove('is-selected');
+      entry.selectedSides = entry.selectedSides.filter(s => s !== sideName);
+    } else {
+      const selectedCount = allBtns.filter(b => b.classList.contains('is-selected')).length;
+      if (selectedCount >= limit) return;
+      btn.classList.add('is-selected');
+      entry.selectedSides = [...entry.selectedSides, sideName];
+    }
+
     cart.set(itemId, entry);
-    syncSidePickers(picker);
+
+    const newCount = allBtns.filter(b => b.classList.contains('is-selected')).length;
+    allBtns.forEach(b => {
+      b.classList.toggle('is-maxed', newCount >= limit && !b.classList.contains('is-selected'));
+    });
+
+    const counter = picker.querySelector<HTMLElement>('[data-side-counter]');
+    if (counter) counter.textContent = `${newCount} / ${limit}`;
+
+    // Show pancake upgrade dropdown when Pancakes is chosen; hide + reset when deselected
+    const pancakeContainer = document.querySelector<HTMLElement>(`[data-pancake-container="${itemId}"]`);
+    if (pancakeContainer) {
+      const hasPancake = entry.selectedSides.includes('Pancakes');
+      if (hasPancake) {
+        pancakeContainer.classList.remove('hidden');
+      } else {
+        pancakeContainer.classList.add('hidden');
+        pancakeContainer.querySelector<HTMLElement>('[data-pancake-panel]')?.classList.add('hidden');
+        pancakeContainer.querySelector<HTMLElement>('[data-pancake-chevron]')?.classList.remove('rotate-180');
+        pancakeContainer.querySelectorAll<HTMLElement>('[data-pancake-btn]').forEach(b => {
+          b.classList.toggle('is-selected', (b as HTMLButtonElement).dataset.upgradeName === '');
+        });
+        entry.upgrade = null;
+        cart.set(itemId, entry);
+      }
+    }
+
     renderSummary();
   });
 
@@ -956,6 +1286,171 @@ const tabs = [
 
 
   // ─────────────────────────────────────────
+  //  CONFIRM / ADD TO ORDER BUTTON
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-confirm-btn]');
+    if (!btn) return;
+    const itemId = btn.dataset.confirmBtn!;
+
+    // Collapse pickers so the menu doesn't feel cluttered after confirming
+    document.querySelector(`[data-egg-picker="${itemId}"]`)?.classList.add('hidden');
+    document.querySelector(`[data-temp-picker="${itemId}"]`)?.classList.add('hidden');
+    document.querySelector(`[data-side-picker="${itemId}"]`)?.classList.add('hidden');
+    document.querySelector(`[data-upgrade-picker="${itemId}"]`)?.classList.add('hidden');
+
+    // Swap confirm button for Edit link
+    btn.classList.add('hidden');
+    const editBtn = document.querySelector<HTMLElement>(`[data-edit-btn="${itemId}"]`);
+    editBtn?.classList.remove('hidden');
+  });
+
+  // ─────────────────────────────────────────
+  //  EDIT BUTTON — RE-OPENS PICKERS
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-edit-btn]');
+    if (!btn) return;
+    const itemId = btn.dataset.editBtn!;
+
+    const eggPickerEdit = document.querySelector<HTMLElement>(`[data-egg-picker="${itemId}"]`);
+    if (eggPickerEdit) {
+      eggPickerEdit.classList.remove('hidden');
+      eggPickerEdit.querySelector<HTMLElement>('[data-egg-panel]')?.classList.remove('hidden');
+      eggPickerEdit.querySelector<HTMLElement>('[data-egg-chevron]')?.classList.add('rotate-180');
+    }
+    document.querySelector(`[data-temp-picker="${itemId}"]`)?.classList.remove('hidden');
+    document.querySelector(`[data-side-picker="${itemId}"]`)?.classList.remove('hidden');
+    document.querySelector(`[data-upgrade-picker="${itemId}"]`)?.classList.remove('hidden');
+
+    btn.classList.add('hidden');
+    const confirmBtn = document.querySelector<HTMLElement>(`[data-confirm-btn="${itemId}"]`);
+    confirmBtn?.classList.remove('hidden');
+  });
+
+
+  // ─────────────────────────────────────────
+  //  PANCAKE UPGRADE DROPDOWN TOGGLE
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-pancake-toggle]');
+    if (!btn) return;
+    const itemId  = btn.dataset.pancakeToggle!;
+    const panel   = document.querySelector<HTMLElement>(`[data-pancake-panel="${itemId}"]`);
+    const chevron = document.querySelector<HTMLElement>(`[data-pancake-chevron="${itemId}"]`);
+    if (!panel) return;
+    const isOpen = !panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', isOpen);
+    chevron?.classList.toggle('rotate-180', !isOpen);
+  });
+
+
+  // ─────────────────────────────────────────
+  //  PANCAKE UPGRADE CHIP HANDLER
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const chip = (e.target as Element).closest<HTMLButtonElement>('[data-pancake-btn]');
+    if (!chip) return;
+    const itemId       = chip.dataset.pancakeFor!;
+    const upgradeName  = chip.dataset.upgradeName ?? '';
+    const upgradePrice = parseFloat(chip.dataset.upgradePrice ?? '0');
+    const entry = cart.get(itemId);
+    if (!entry) return;
+
+    entry.upgrade = upgradeName ? { name: upgradeName, price: upgradePrice } : null;
+    cart.set(itemId, entry);
+
+    chip.closest<HTMLElement>('[data-pancake-container]')
+      ?.querySelectorAll<HTMLElement>('[data-pancake-btn]')
+      .forEach(b => b.classList.toggle('is-selected', b === chip));
+
+    renderSummary();
+  });
+
+
+  // ─────────────────────────────────────────
+  //  TEMPERATURE CHIP HANDLER
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const chip = (e.target as Element).closest<HTMLButtonElement>('[data-temp-btn]');
+    if (!chip) return;
+    const itemId = chip.dataset.tempFor!;
+    const temp   = chip.dataset.tempName!;
+    const entry  = cart.get(itemId);
+    if (!entry) return;
+
+    entry.selectedTemp = temp;
+    cart.set(itemId, entry);
+
+    chip.closest<HTMLElement>('[data-temp-picker]')
+      ?.querySelectorAll<HTMLElement>('[data-temp-btn]')
+      .forEach(b => b.classList.toggle('is-selected', b === chip));
+
+    renderSummary();
+  });
+
+
+  // ─────────────────────────────────────────
+  //  EGG STYLE TOGGLE
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-egg-toggle]');
+    if (!btn) return;
+    const itemId  = btn.dataset.eggToggle!;
+    const panel   = document.querySelector<HTMLElement>(`[data-egg-panel="${itemId}"]`);
+    const chevron = document.querySelector<HTMLElement>(`[data-egg-chevron="${itemId}"]`);
+    if (!panel) return;
+    const isOpen = !panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', isOpen);
+    chevron?.classList.toggle('rotate-180', !isOpen);
+  });
+
+
+  // ─────────────────────────────────────────
+  //  EGG STYLE CHIP HANDLER
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const chip = (e.target as Element).closest<HTMLButtonElement>('[data-egg-btn]');
+    if (!chip) return;
+    const itemId   = chip.dataset.eggFor!;
+    const eggName  = chip.dataset.eggName!;
+    const eggPrice = parseFloat(chip.dataset.eggPrice ?? '0');
+    const entry = cart.get(itemId);
+    if (!entry) return;
+
+    entry.selectedEgg = { name: eggName, price: eggPrice };
+    cart.set(itemId, entry);
+
+    chip.closest<HTMLElement>('[data-egg-panel]')
+      ?.querySelectorAll<HTMLElement>('[data-egg-btn]')
+      .forEach(b => b.classList.toggle('is-selected', b === chip));
+
+    const nextBtn = document.querySelector<HTMLButtonElement>(`[data-egg-next="${itemId}"]`);
+    if (nextBtn) nextBtn.disabled = false;
+
+    renderSummary();
+  });
+
+
+  // ─────────────────────────────────────────
+  //  EGG NEXT BUTTON — COLLAPSE & GO TO SIDES
+  // ─────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-egg-next]');
+    if (!btn || btn.disabled) return;
+    const itemId = btn.dataset.eggNext!;
+    const panel   = document.querySelector<HTMLElement>(`[data-egg-panel="${itemId}"]`);
+    const chevron = document.querySelector<HTMLElement>(`[data-egg-chevron="${itemId}"]`);
+    panel?.classList.add('hidden');
+    chevron?.classList.remove('rotate-180');
+    const sidePicker = document.querySelector<HTMLElement>(`[data-side-picker="${itemId}"]`);
+    const tempPicker = document.querySelector<HTMLElement>(`[data-temp-picker="${itemId}"]`);
+    const target = sidePicker ?? tempPicker;
+    target?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+
+  // ─────────────────────────────────────────
   //  RENDER SUMMARY SIDEBAR
   // ─────────────────────────────────────────
   function renderSummary() {
@@ -963,7 +1458,8 @@ const tabs = [
     let count = 0;
     cart.forEach(item => {
       const sideUp = item.selectedSides.reduce((s, side) => s + (item.sideUpchargeMap[side] ?? 0), 0);
-      total += (item.price + (item.upgrade?.price ?? 0) + sideUp) * item.qty;
+      const eggUp  = item.selectedEgg?.price ?? 0;
+      total += (item.price + (item.upgrade?.price ?? 0) + sideUp + eggUp) * item.qty;
       count += item.qty;
     });
 
@@ -1004,6 +1500,16 @@ const tabs = [
         html += `<p class="text-xs uppercase tracking-widest text-on-surface-variant/50 mt-4 mb-1 first:mt-0">${sec}</p>`;
         items.forEach(item => {
           let metaHtml = '';
+          if (item.isEggRequired) {
+            if (item.selectedEgg) {
+              const eggLabel = item.selectedEgg.price > 0
+                ? `${item.selectedEgg.name} (+$${item.selectedEgg.price.toFixed(2)})`
+                : item.selectedEgg.name;
+              metaHtml += `<p class="text-xs text-on-surface-variant/70 mt-0.5">Eggs: ${eggLabel}</p>`;
+            } else {
+              metaHtml += `<p class="text-xs text-amber-600 mt-0.5">⚠ Choose egg style</p>`;
+            }
+          }
           if (item.sidesRequired > 0) {
             const filled = item.selectedSides.filter(s => s !== '');
             if (filled.length === item.sidesRequired) {
@@ -1018,11 +1524,17 @@ const tabs = [
               hasIncompleteSides = true;
             }
           }
+          if (item.selectedTemp) {
+            metaHtml += `<p class="text-xs text-on-surface-variant/70 mt-0.5">Temp: ${item.selectedTemp}</p>`;
+          } else if (item.name.toLowerCase().includes('steak')) {
+            metaHtml += `<p class="text-xs text-amber-600 mt-0.5">⚠ Choose a temperature</p>`;
+          }
           if (item.upgrade) {
             metaHtml += `<p class="text-xs text-tertiary/80 mt-0.5">+ ${item.upgrade.name}</p>`;
           }
           const sideUp    = item.selectedSides.reduce((s, side) => s + (item.sideUpchargeMap[side] ?? 0), 0);
-          const lineTotal = (item.price + (item.upgrade?.price ?? 0) + sideUp) * item.qty;
+          const eggUp     = item.selectedEgg?.price ?? 0;
+          const lineTotal = (item.price + (item.upgrade?.price ?? 0) + sideUp + eggUp) * item.qty;
           html += `
             <div class="flex justify-between items-start py-1 gap-3">
               <div class="min-w-0">
@@ -1039,17 +1551,21 @@ const tabs = [
       if (listEl) { listEl.innerHTML = html; listEl.classList.remove('hidden'); }
     }
 
-    // Check for incomplete side selections
+    // Check for incomplete sides, temperature, and egg style
     let hasIncompleteSides = false;
+    let hasIncompleteTemp  = false;
+    let hasIncompleteEgg   = false;
     cart.forEach(item => {
       if (item.sidesRequired > 0) {
         const filled = item.selectedSides.filter(s => s !== '').length;
         if (filled < item.sidesRequired) hasIncompleteSides = true;
       }
+      if (item.name.toLowerCase().includes('steak') && !item.selectedTemp) hasIncompleteTemp = true;
+      if (item.isEggRequired && !item.selectedEgg) hasIncompleteEgg = true;
     });
 
     // Submit button state
-    const canSubmit = count > 0 && !hasIncompleteSides;
+    const canSubmit = count > 0 && !hasIncompleteSides && !hasIncompleteTemp && !hasIncompleteEgg;
     const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
     if (submitBtn) {
       submitBtn.disabled = !canSubmit;
@@ -1091,10 +1607,13 @@ const tabs = [
     cart.forEach(item => {
       let itemName = item.name;
       const filled = item.selectedSides.filter(s => s !== '');
+      if (item.selectedEgg)    itemName += ` [${item.selectedEgg.name}]`;
       if (filled.length > 0)  itemName += ` (${filled.join(', ')})`;
       if (item.upgrade)        itemName += ` + ${item.upgrade.name}`;
+      if (item.selectedTemp)   itemName += ` — ${item.selectedTemp}`;
       const sideUp    = item.selectedSides.reduce((s, side) => s + (item.sideUpchargeMap[side] ?? 0), 0);
-      const unitPrice = item.price + (item.upgrade?.price ?? 0) + sideUp;
+      const eggUp     = item.selectedEgg?.price ?? 0;
+      const unitPrice = item.price + (item.upgrade?.price ?? 0) + sideUp + eggUp;
       items.push({ name: itemName, price: unitPrice, qty: item.qty });
     });
 

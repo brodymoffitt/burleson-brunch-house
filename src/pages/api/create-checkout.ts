@@ -1,7 +1,6 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import Stripe from 'stripe';
 
 interface CartItem {
   name: string;
@@ -9,25 +8,23 @@ interface CartItem {
   qty: number;
 }
 
-export const POST: APIRoute = async ({ request }) => {
-  const key = import.meta.env.STRIPE_SECRET_KEY as string | undefined;
+const cloverBase = () =>
+  import.meta.env.CLOVER_ENV === 'sandbox'
+    ? 'https://sandbox.dev.clover.com'
+    : 'https://api.clover.com';
 
-  if (!key) {
-    return new Response(JSON.stringify({ error: 'Stripe is not configured yet.' }), {
+export const POST: APIRoute = async ({ request }) => {
+  const token      = import.meta.env.CLOVER_API_TOKEN as string | undefined;
+  const merchantId = import.meta.env.CLOVER_MERCHANT_ID as string | undefined;
+
+  if (!token || !merchantId) {
+    return new Response(JSON.stringify({ error: 'Clover is not configured.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
-  const stripe = new Stripe(key);
-
-  let body: {
-    items: CartItem[];
-    name: string;
-    phone: string;
-    notes: string;
-    origin: string;
-  };
+  let body: { items: CartItem[]; name: string; phone: string; notes: string; origin: string };
 
   try {
     body = await request.json();
@@ -47,33 +44,47 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: items.map(item => ({
-      price_data: {
-        currency: 'usd',
-        product_data: { name: item.name },
-        unit_amount: Math.round(item.price * 100),
-      },
-      quantity: item.qty,
-    })),
-    mode: 'payment',
-    metadata: {
-      customer_name: name,
-      phone,
-      ready_in: 'Ready in ~30 minutes',
-      notes: notes ?? '',
+  // Encode full order data so the success page can push it to the Clover POS
+  const encoded = Buffer.from(JSON.stringify({ name, phone, notes, items })).toString('base64url');
+
+  // Build Clover line items — prices in cents, one entry per unit of qty
+  const lineItems = items.flatMap(item =>
+    Array.from({ length: item.qty }, () => ({
+      name: item.name,
+      unitQty: 1,
+      price: Math.round(item.price * 100),
+    }))
+  );
+
+  const res = await fetch(`${cloverBase()}/invoicingcheckoutservice/v1/checkouts`, {
+    method: 'POST',
+    headers: {
+      'Authorization':       `Bearer ${token}`,
+      'X-Clover-Merchant-Id': merchantId,
+      'Content-Type':        'application/json',
     },
-    custom_text: {
-      submit: {
-        message: `Pickup at Burleson Brunch House · Ready in ~30 min · (682) 730-1391`,
+    body: JSON.stringify({
+      customer: { firstName: name, phoneNumber: phone },
+      shoppingCart: { lineItems },
+      redirectUrls: {
+        success: `${origin}/order/success?o=${encoded}&name=${encodeURIComponent(name)}`,
+        failure: `${origin}/order/cancel`,
       },
-    },
-    success_url: `${origin}/order/success?name=${encodeURIComponent(name)}`,
-    cancel_url: `${origin}/order/cancel`,
+    }),
   });
 
-  return new Response(JSON.stringify({ url: session.url }), {
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('Clover checkout error:', err);
+    return new Response(JSON.stringify({ error: 'Could not create checkout. Please call us.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const data = await res.json();
+
+  return new Response(JSON.stringify({ url: data.href }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });

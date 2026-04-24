@@ -1,5 +1,66 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
+
+const token      = import.meta.env.CLOVER_API_TOKEN  as string | undefined;
+const merchantId = import.meta.env.CLOVER_MERCHANT_ID as string | undefined;
+const base       = import.meta.env.CLOVER_ENV === 'sandbox'
+  ? 'https://sandbox.dev.clover.com'
+  : 'https://api.clover.com';
+
+const { searchParams } = Astro.url;
+const name    = searchParams.get('name') ?? 'there';
+const encoded = searchParams.get('o');
+
+// Push the order to the Clover POS terminal so the kitchen sees it immediately
+if (encoded && token && merchantId) {
+  try {
+    interface OrderItem { name: string; price: number; qty: number; }
+    const { name: customerName, phone, notes, items } = JSON.parse(
+      Buffer.from(encoded, 'base64url').toString()
+    ) as { name: string; phone: string; notes: string; items: OrderItem[] };
+
+    const noteLines = [
+      `Online Pickup — ${customerName} — ${phone}`,
+      notes ? `Notes: ${notes}` : '',
+    ].filter(Boolean).join('\n');
+
+    const orderRes = await fetch(`${base}/v3/merchants/${merchantId}/orders`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type':  'application/json',
+      },
+      body: JSON.stringify({ state: 'open', note: noteLines }),
+    });
+
+    if (orderRes.ok) {
+      const { id: orderId } = await orderRes.json();
+
+      // Add each item to the ticket — qty > 1 adds duplicate lines (standard POS behaviour)
+      for (const item of items) {
+        for (let i = 0; i < item.qty; i++) {
+          await fetch(`${base}/v3/merchants/${merchantId}/orders/${orderId}/line_items`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type':  'application/json',
+            },
+            body: JSON.stringify({
+              name:     item.name,
+              price:    Math.round(item.price * 100),
+              unitQty:  1000,
+            }),
+          });
+        }
+      }
+    }
+  } catch (e) {
+    // POS push failed — payment was still successful, staff can see it in Clover dashboard
+    console.error('Clover POS order creation failed:', e);
+  }
+}
 ---
 
 <Layout
@@ -21,12 +82,11 @@ import Layout from '../../layouts/Layout.astro';
       <!-- Script accent -->
       <div class="font-script text-5xl text-primary mb-3">Order Confirmed!</div>
 
-      <!-- Headline filled in by JS -->
-      <h1 class="font-headline text-2xl italic text-on-surface mb-2" id="confirm-heading">
-        Your order is paid and confirmed.
+      <h1 class="font-headline text-2xl italic text-on-surface mb-2">
+        Thank you, {name}! Your order is confirmed.
       </h1>
       <p class="text-on-surface-variant leading-relaxed mb-8" id="confirm-body">
-        We'll have everything ready for your pickup time. See you soon!
+        We'll have everything hot and ready for your pickup time. See you soon!
       </p>
 
       <!-- Info card -->
@@ -76,19 +136,11 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const name   = params.get('name');
-
-  if (name) {
-    const heading = document.getElementById('confirm-heading');
-    if (heading) heading.textContent = `Thank you, ${name}! Your order is confirmed.`;
-  }
-
-  // Compute ready time = now + 30 min
-  const ready = new Date(Date.now() + 30 * 60 * 1000);
+  // Show estimated ready time calculated client-side
+  const ready    = new Date(Date.now() + 30 * 60 * 1000);
   const readyStr = ready.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  const timeEl = document.getElementById('confirm-time');
-  const bodyEl = document.getElementById('confirm-body');
+  const timeEl   = document.getElementById('confirm-time');
+  const bodyEl   = document.getElementById('confirm-body');
   if (timeEl) timeEl.textContent = `Around ${readyStr}`;
   if (bodyEl) bodyEl.textContent = `We'll have everything hot and ready for you around ${readyStr}. See you soon!`;
 </script>
