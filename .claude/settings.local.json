@@ -10,5 +10,14 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(cp -r /home/user/burleson-brunch-house/.claude/skills/impeccable /home/user/burleson-brunch-house/_template/.claude/skills/)",
+      "Bash(cp -r /home/user/burleson-brunch-house/.claude/skills/frontend-design /home/user/burleson-brunch-house/_template/.claude/skills/)",
+      "Bash(cp /home/user/burleson-brunch-house/.claude/install-clis.sh /home/user/burleson-brunch-house/_template/.claude/)",
+      "Bash(cp /home/user/burleson-brunch-house/.claude/settings.local.json /home/user/burleson-brunch-house/_template/.claude/)",
+      "Bash(cp /home/user/burleson-brunch-house/.mcp.json /home/user/burleson-brunch-house/_template/)"
+    ]
   }
 }
