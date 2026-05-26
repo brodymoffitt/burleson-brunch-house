@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/migration/restore-dotfiles.sh"
+            "command": "bash $CLAUDE_PROJECT_DIR/migration/install.sh"
           }
         ]
       }

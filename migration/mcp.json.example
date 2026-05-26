@@ -1,0 +1,17 @@
+{
+  "_comment": "Drop this at the REPO ROOT as .mcp.json to enable project-scoped MCP servers. Environment-level MCPs are configured in the web dashboard instead.",
+  "mcpServers": {
+    "example-stdio": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/burleson-brunch-house"]
+    },
+    "example-http": {
+      "type": "http",
+      "url": "https://example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${EXAMPLE_TOKEN}"
+      }
+    }
+  }
+}
