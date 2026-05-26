@@ -13,7 +13,28 @@ const cloverBase = () =>
     ? 'https://sandbox.dev.clover.com'
     : 'https://api.clover.com';
 
+// Online ordering cuts off at 2:15 PM America/Chicago to give the kitchen time
+// to fulfill before the 3:00 PM close.
+function isOrderingClosed(): boolean {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago',
+    hour:     'numeric',
+    minute:   'numeric',
+    hour12:   false,
+  }).formatToParts(new Date());
+  const hour   = Number(parts.find(p => p.type === 'hour')?.value   ?? '0');
+  const minute = Number(parts.find(p => p.type === 'minute')?.value ?? '0');
+  return hour > 14 || (hour === 14 && minute >= 15);
+}
+
 export const POST: APIRoute = async ({ request }) => {
+  if (isOrderingClosed()) {
+    return new Response(
+      JSON.stringify({ error: 'Online ordering is closed for today. We stop taking online orders at 2:15 PM. Please call us at (682) 730-1391 or come back tomorrow.' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   const token      = import.meta.env.CLOVER_API_TOKEN as string | undefined;
   const merchantId = import.meta.env.CLOVER_MERCHANT_ID as string | undefined;
 
